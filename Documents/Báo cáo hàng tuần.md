@@ -1,4 +1,4 @@
-#Tuần 1
+# Tuần 1
 # 📚 Hệ thống Quản lý Thư viện Online
 
 ## 🎯 Mục tiêu hệ thống
@@ -69,7 +69,7 @@ Hệ thống hỗ trợ quản lý thư viện trực tuyến:
 | Quản trị viên| Quản lý sách, Quản lý người dùng, Quản lý mượn – trả, Xem báo cáo           |
 
 ---
-#Tuần 2
+# Tuần 2
 ## 📊 Biểu đồ Use Case (mô tả)
 - **Người dùng** ↔ (Đăng ký/Đăng nhập, Tìm kiếm sách, Xem chi tiết, Mượn, Trả, Gia hạn, Đánh giá)  
 
