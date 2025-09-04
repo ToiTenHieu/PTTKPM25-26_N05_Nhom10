@@ -3,13 +3,15 @@
 ## 🎯 Mục tiêu hệ thống
 Hệ thống hỗ trợ quản lý thư viện trực tuyến:
 - Người dùng có thể tìm kiếm, mượn, trả và đánh giá sách.
-- Quản trị viên quản lý sách, người dùng và hoạt động mượn – trả.
+- Thủ thư quản lý hoạt động mượn/trả, thêm mới sách, cập nhật thông tin sách, xử lý yêu cầu từ người dùng.
+- Quản trị viên quản lý toàn bộ hệ thống thư viện, phân quyền cho các thủ thư, theo dõi thống kê.
 - Hệ thống cung cấp báo cáo, thống kê và gửi thông báo tự động.
 
 ---
 
 ## 👥 Các Actor chính
 - **Người dùng (User / Độc giả)**
+- **Thủ thư(Librarian / Nhân viên quản lý thư viện)**
 - **Quản trị viên (Admin)**
 - **Hệ thống** (tác nhân phụ trợ: xử lý, gửi thông báo)
 
@@ -26,11 +28,16 @@ Hệ thống hỗ trợ quản lý thư viện trực tuyến:
 - Gia hạn sách
 - Viết đánh giá / nhận xét
 
-### Quản trị viên (Admin)
+### Thủ thư (Librarian)
 - Quản lý sách (thêm, cập nhật, xóa)
 - Quản lý người dùng (tạo, khóa, mở tài khoản)
 - Quản lý phiếu mượn – trả
+- Kiểm tra tình trạng sách
+
+### Quản trị viên (Admin)
 - Xem báo cáo thống kê (sách mượn nhiều, tồn kho, người dùng vi phạm)
+- Quản lý thủ thư (tạo/sửa/xoá tài khoản thủ thư)
+- Quản lý hệ thống
 
 ---
 
@@ -64,10 +71,11 @@ Hệ thống hỗ trợ quản lý thư viện trực tuyến:
 
 ## 📊 Biểu đồ Use Case (mô tả)
 - **Người dùng** ↔ (Đăng ký/Đăng nhập, Tìm kiếm sách, Xem chi tiết, Mượn, Trả, Gia hạn, Đánh giá)  
-- **Admin** ↔ (Quản lý sách, Quản lý người dùng, Quản lý mượn – trả, Xem báo cáo)
 
 ![Alt text](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.36.20.png)
-  
+
+- **Admin** ↔ (Quản lý sách, Quản lý người dùng, Quản lý mượn – trả, Xem báo cáo)
+
 ![Alt text](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.37.48.png)
 # 📚 Use Case - Quản lý thư viện
 
