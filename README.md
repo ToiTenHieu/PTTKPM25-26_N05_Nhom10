@@ -66,7 +66,7 @@ Hệ thống hỗ trợ quản lý thư viện trực tuyến:
 - **Người dùng** ↔ (Đăng ký/Đăng nhập, Tìm kiếm sách, Xem chi tiết, Mượn, Trả, Gia hạn, Đánh giá)  
 - **Admin** ↔ (Quản lý sách, Quản lý người dùng, Quản lý mượn – trả, Xem báo cáo)
 
-![Alt text]([https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.37.48.png](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.36.20.png))
+![Alt text](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.36.20.png)
   
 ![Alt text](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/SRC/Images/A%CC%89nh%20ma%CC%80n%20hi%CC%80nh%202025-09-03%20lu%CC%81c%2020.37.48.png)
 # 📚 Use Case - Quản lý thư viện
