@@ -149,7 +149,11 @@ Thủ thư/Quản trị viên thêm sách mới vào hệ thống.
 4. Hệ thống kiểm tra dữ liệu (mã sách có trùng không, số lượng hợp lệ).  
 5. Nếu hợp lệ, hệ thống lưu thông tin sách vào cơ sở dữ liệu.  
 6. Hệ thống thông báo ✅ **“Thêm sách thành công”**.  
-7. Sách mới xuất hiện trong danh mục để độc giả có thể tra cứu/mượn.  
+7. Sách mới xuất hiện trong danh mục để độc giả có thể tra cứu/mượn.
+
+# Tuần 3
+- Thiết kế sơ đồ lớp
+ ![Alt text](https://github.com/ToiTenHieu/PTTKPM25-26_N05_Nhom10/blob/main/Documents/SRS/ClassDiagram.jpg)
 
 
 
