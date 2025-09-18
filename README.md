@@ -1,4 +1,13 @@
+
 # 📚 Hệ thống Quản lý Thư viện Online
+## 👨‍💻 Thành viên nhóm
+## 👨‍👩‍👧‍👦 Thành viên nhóm
+
+| STT | Họ và tên          | Mã SV            |
+|-----|--------------------|----------------------|
+| 1   | Nguyễn Trường Sơn  | 23010313          |
+| 2   | Nguyễn Đăng Hiếu   |   23010049 |
+
 
 ## 🎯 Mục tiêu hệ thống
 Hệ thống hỗ trợ quản lý thư viện trực tuyến:
