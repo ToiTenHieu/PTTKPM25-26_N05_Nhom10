@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Thư Viện Trung Tâm{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg">📚</span>
+                    </div>
+                    <h1 class="text-xl font-bold text-gray-900">Thư Viện Trung Tâm</h1>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Trang chủ</a>
+                    <a href="{% url 'catalog' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Danh mục</a>
+                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Dịch vụ</a>
+                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Liên hệ</a>
+                    <a href="{% url 'membership' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Gói thành viên</a> 
+                </nav>
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated and user.userprofile.role == "user" %}
+        <!-- Button -->
+                    <div class="relative inline-block">
+    <!-- Button -->
+                    <button onclick="toggleUserMenu()" id="userMenuButton"class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 rounded-lg px-3 py-2 transition-colors">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-400 to-red-500 rounded-full flex items-center justify-center">
+                            <span class="text-white text-sm font-bold">{{ user.username|slice:":3"|upper }}</span>
+                        </div>
+                        <div class="hidden md:block text-left">
+                            <div class="text-sm font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="text-xs text-gray-500">{{user.userprofile.role}}</div>
+                        </div>
+                        <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+    <!-- Dropdown ngay dưới button -->
+                    <div id="userDropdown"class="hidden absolute left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                        <div class="p-4 border-b border-gray-100">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-red-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-lg font-bold">{{ user.username|slice:":3"|upper }}</span>
+                                </div>
+                            <div>
+                            <div class="font-medium text-gray-900">{{ user.get_full_name|default:user.username }}</div>
+                            <div class="text-sm text-gray-500">{{ user.email }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-2">
+                    <a href="{% url 'profile_view' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Thông tin cá nhân</a>
+                    {% comment %} <a href="{% url 'borrowed_books' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Sách của tôi</a> {% endcomment %}
+                    <a href="{% url 'change_password' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Đổi mật khẩu</a>
+
+            <form method="POST" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit"
+                    class="w-full text-left px-4 py-2 text-sm text-red-600 rounded hover:bg-gray-100">
+                    Đăng xuất
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleUserMenu() {
+        document.getElementById('userDropdown').classList.toggle('hidden');
+    }
+
+    // Tự đóng khi click ra ngoài
+    window.addEventListener('click', function (e) {
+        const button = document.getElementById('userMenuButton');
+        const menu = document.getElementById('userDropdown');
+        if (button && menu && !button.contains(e.target) && !menu.contains(e.target)) {
+            menu.classList.add('hidden');
+        }
+    });
+</script>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Đăng ký
+                        </a>
+                        <a href="{% url 'login' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                            Đăng nhập
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </header>
+    <main >
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer class="bg-gray-800 text-gray-300 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2025 Thư Viện Trung Tâm. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </footer>
+</html>
