@@ -129,19 +129,13 @@
                                 </div>
                             </div>
                         </div>
-                        {# Hiển thị theo định dạng Ngày/Tháng/Năm #}
                         <p><strong>Ngày tham gia:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
-                        {% comment %} {# Hoặc hiển thị cả giờ và phút #}
-                        <p><strong>Ngày tham gia:</strong> {{ user.date_joined|date:"H:i, d/m/Y" }}</p>
-
-                        {# Hoặc định dạng đầy đủ hơn #}
-                        <p><strong>Ngày tham gia:</strong> {{ user.date_joined|date:"l, d F Y" }}</p> {% endcomment %}
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-md max-w-sm mx-auto">
                         <h3 class="text-xl font-semibold text-gray-700 mb-4">Hạng hiện tại: {{ user.userprofile.get_membership_level_display }}</h3>
-                        {% comment %} <a href="{% url 'membership' %}" class="block w-full py-3 px-6 text-center text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-300"> {% endcomment %}
+                        <a href="{% url 'library:membership' %}" class="block w-full py-3 px-6 text-center text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-300">
                             Nâng cấp gói thành viên
-                        {% comment %} </a> {% endcomment %}
+                        </a>
                     <p>
                         <strong>Gói hiện tại:</strong> 
                         {{ profile_form.instance.get_membership_level_display }}
@@ -161,9 +155,9 @@
                                 <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"H:i, d/m/Y" }}</strong>
                             </p>
                         {% endif %}
-                        {% comment %} <a href="{% url 'payment' %}?level={{ profile_form.instance.membership_level }}" class="block w-full py-3 px-6 text-center text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-300"> {% endcomment %}
+                        <a href="{% url 'library:payment' %}?level={{ profile_form.instance.membership_level }}" class="block w-full py-3 px-6 text-center text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-300">
                             Gia hạn
-                        {% comment %} </a> {% endcomment %}
+                        </a>
                     {%endif%}    
                     </div>
                 </div>
@@ -177,43 +171,31 @@
                                 ✏️ Chỉnh sửa
                             </button>
                         </div>
-                        {% comment %} <a href="{% url 'upgrade_membership' 'standard' %}" class="btn btn-primary">
-                        Nâng cấp lên Tiêu chuẩn
-                        </a>
-                        <a href="{% url 'upgrade_membership' 'premium' %}" class="btn btn-success">
-                        Nâng cấp lên Cao cấp
-                        </a> {% endcomment %}
 
                         <form method="POST" id="profileForm" class="space-y-6">
                             {% csrf_token %}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <!-- Họ và tên -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
                                     <input type="text" name="name" value="{{ user.userprofile.name }}" 
                                         class="profile-input w-full px-4 py-3 text-gray-900" readonly>
                                 </div>
 
-
-                                <!-- Email -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
                                     <input type="email" name="email"id="email" value="{{user.email}}" class="profile-input w-full px-4 py-3 text-gray-900" readonly>
                                 </div>
 
-                                <!-- Số điện thoại -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
                                     <input type="tel" name="phone" id="phone" value="{{user.userprofile.phone}}" class="profile-input w-full px-4 py-3 text-gray-900" readonly>
                                 </div>
 
-                                <!-- Ngày sinh -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
                                     <input type="date" name="date_of_birth" id="birthDate" value="{{user.userprofile.date_of_birth|date:'Y-m-d'}}" class="profile-input w-full px-4 py-3 text-gray-900" readonly>
                                 </div>
 
-                                <!-- Giới tính -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
                                     <select name="gender" id="gender" class="profile-input w-full px-4 py-3 text-gray-900" disabled>
@@ -223,22 +205,17 @@
                                     </select>
                                 </div>
 
-                                <!-- Nghề nghiệp -->
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Nghề nghiệp</label>
                                     <input type="text" name="occupation" id="occupation" value="{{user.userprofile.occupation}}" class="profile-input w-full px-4 py-3 text-gray-900" readonly>
                                 </div>
                             </div>
 
-                            <!-- Địa chỉ -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Địa chỉ</label>
                                 <textarea id="address" name="address" rows="3" class="profile-input w-full px-4 py-3 text-gray-900" readonly>{{user.userprofile.address}}</textarea>
                             </div>
 
-                            
-
-                            <!-- Action Buttons -->
                             <div id="actionButtons" class="hidden flex justify-end space-x-4 pt-6 border-t border-gray-200">
                                 <button type="button" onclick="cancelEdit()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                                     Hủy

@@ -100,3 +100,7 @@ def change_password(request):
 
 def home(request):
     return render(request, 'account/home.html')
+def regis_by_fb(request):
+    return render(request, 'account/regis_by_fb.html')
+def regis_by_gg(request):
+    return render(request, 'account/regis_by_gg.html')

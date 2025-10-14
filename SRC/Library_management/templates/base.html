@@ -21,11 +21,11 @@
                     <h1 class="text-xl font-bold text-gray-900">Thư Viện Trung Tâm</h1>
                 </div>
                 <nav class="hidden md:flex space-x-8">
-                    <a href="{% url 'home' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Trang chủ</a>
-                    <a href="{% url 'catalog' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Danh mục</a>
-                    <a href="{% url 'services' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Dịch vụ</a>
-                    <a href="{% url 'contact' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Liên hệ</a>
-                    <a href="{% url 'membership' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Gói thành viên</a> 
+                    <a href="{% url 'library:home' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Trang chủ</a>
+                    <a href="{% url 'library:catalog' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Danh mục</a>
+                    <a href="{% url 'library:services' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Dịch vụ</a>
+                    <a href="{% url 'library:contact' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Liên hệ</a>
+                    <a href="{% url 'library:membership' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Gói thành viên</a> 
                 </nav>
                 <div class="flex items-center space-x-4">
                     {% if user.is_authenticated and user.userprofile.role == "user" %}
@@ -59,11 +59,11 @@
                     </div>
                 </div>
                 <div class="p-2">
-                    <a href="{% url 'profile_view' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Thông tin cá nhân</a>
+                    <a href="{% url 'account:profile_view' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Thông tin cá nhân</a>
                     {% comment %} <a href="{% url 'borrowed_books' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Sách của tôi</a> {% endcomment %}
-                    <a href="{% url 'change_password' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Đổi mật khẩu</a>
+                    <a href="{% url 'account:change_password' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Đổi mật khẩu</a>
 
-            <form method="POST" action="{% url 'logout' %}">
+            <form method="POST" action="{% url 'account:logout' %}">
                 {% csrf_token %}
                 <button type="submit"
                     class="w-full text-left px-4 py-2 text-sm text-red-600 rounded hover:bg-gray-100">
@@ -89,10 +89,10 @@
     });
 </script>
                     {% else %}
-                        <a href="{% url 'register' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <a href="{% url 'account:register' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                             Đăng ký
                         </a>
-                        <a href="{% url 'login' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+                        <a href="{% url 'account:login' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                             Đăng nhập
                         </a>
                     {% endif %}
