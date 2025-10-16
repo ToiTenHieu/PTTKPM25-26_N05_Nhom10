@@ -1,7 +1,15 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
+from Librarian.models import Book
 
 def catalog(request):
-    return render(request, 'library/catalog.html')
+    books = Book.objects.all().order_by("-book_id")   # lấy danh sách sách
+    paginator = Paginator(books, 8)  # 8 sách / trang
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "accounts/catalog.html", {"page_obj": page_obj})
 def home(request):
     return render(request, 'library/home.html')
 def services(request):

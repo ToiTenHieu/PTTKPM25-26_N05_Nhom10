@@ -134,3 +134,13 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Cấu hình Cache (dùng RAM)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+    }
+}
+# (Tuỳ chọn) Khi tắt trình duyệt thì mất đăng nhập
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1800  # giây = 30 phút
+GOOGLE_MAPS_API_KEY = 'AIzaSyCS0waA3JxAA9bB0-rAd-YH_eM2ayhugD0'
