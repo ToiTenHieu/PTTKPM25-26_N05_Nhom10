@@ -1,0 +1,451 @@
+<div
+  id="muonTraSach"
+  class="section bg-white rounded-2xl shadow-2xl p-8 mb-8 transition-all duration-500 ease-in-out border-t-4 border-green-600"
+>
+  <h2 class="text-3xl font-extrabold text-green-700 mb-8 flex items-center space-x-3">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 15m15.356-2H20v-5m-9 9l3 3m-3-3l-3 3m-3-3h.01"></path></svg>
+    <span>Quản Lý Mượn/Trả Sách</span>
+  </h2>
+
+  <div class="flex mb-8 bg-gray-100 p-1 rounded-xl shadow-inner">
+    <button
+      onclick="showBorrowTab('dangMuon', this)"
+      id="tabDangMuon"
+      class="borrow-tab flex-1 px-6 py-3 text-center text-base font-semibold text-white-700  hover:text-green-600 rounded-xl transition-all duration-300"
+    >
+      📋 Đang Mượn
+    </button>
+    <button
+      onclick="showBorrowTab('lichSu', this)"
+      id="tabLichSu"
+      class="borrow-tab flex-1 px-6 py-3 text-center text-base font-semibold text-white-700  hover:text-green-600 rounded-xl transition-all duration-300"
+    >
+      📚 Lịch Sử
+    </button>
+    <button
+      onclick="showBorrowTab('thongKe', this)"
+      id="tabThongKe"
+      class="borrow-tab flex-1 px-6 py-3 text-center text-base font-semibold text-white-700  hover:text-green-600 rounded-xl transition-all duration-300"
+    >
+      👥 Thống Kê
+    </button>
+  </div>
+
+  <div id="dangMuon" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
+    <div class="flex justify-between items-center pb-4 border-b-2 border-green-100 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
+        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+        <span>Sách Đang Được Mượn</span>
+      </h3>
+      <div class="text-base text-gray-600">
+        Tổng số phiếu: <span class="font-extrabold text-green-600 text-2xl ml-1">{{ total }}</span>
+      </div>
+    </div>
+
+    <div class="max-h-[500px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+      {% for record in records %}
+        <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:ring-2 
+          {% if record.status == 'overdue' %}border-l-8 border-red-600 bg-red-50 hover:ring-red-200{% else %}border-l-8 border-green-600 hover:ring-green-100{% endif %}">
+          
+          <div class="flex justify-between items-center">
+            <div class="flex-1 space-y-1">
+              <h4 class="font-extrabold text-lg text-gray-900 leading-snug">
+                📖 {{ record.book.title }}
+              </h4>
+              
+              <p class="text-sm text-gray-600 flex items-center space-x-1">
+                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                <span>{{ record.user.get_full_name }} (ID: {{ record.user.id }})</span>
+              </p>
+              
+              <div class="flex items-center space-x-6 pt-2">
+                <p class="text-xs text-gray-500 flex items-center space-x-1">
+                  <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                  <span>Mượn: {{ record.borrow_date }}</span>
+                </p>
+                
+                {% if record.status == "overdue" %}
+                  <p class="text-sm text-red-700 font-bold flex items-center space-x-1 animate-bounce">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Hạn trả: {{ record.due_date }} (QUÁ HẠN NẶNG)</span>
+                  </p>
+                {% else %}
+                  <p class="text-sm text-gray-600 flex items-center space-x-1">
+                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>Hạn trả: {{ record.due_date }}</span>
+                  </p>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="flex flex-col space-y-2 ml-4 flex-shrink-0 items-end">
+              {% if record.status == "overdue" %}
+                <span class="text-xs font-bold bg-red-600 text-white px-3 py-1 rounded-full text-center shadow-lg border border-red-800">
+                  🚨 Quá hạn
+                </span>
+              {% endif %}
+              <button class="text-sm font-semibold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.05]">
+                ✅ Trả Sách
+              </button>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="text-center py-10 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+          <p class="text-gray-500 text-lg font-medium">🎉 Xin chúc mừng! Không có sách nào đang được mượn.</p>
+          <p class="text-sm text-gray-400 mt-2">Dữ liệu về sách đang mượn của thư viện hiện trống.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+
+  <div id="lichSu" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg hidden">
+    <div class="flex justify-between items-center pb-4 border-b-2 border-green-100 mb-6">
+      <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"></path></svg>
+        <span>Lịch Sử Giao Dịch</span>
+      </h3>
+      <div class="text-base text-gray-600">
+        Tổng giao dịch: <span class="font-extrabold text-green-600 text-2xl ml-1">15</span>
+      </div>
+    </div>
+    <div class="max-h-[500px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-blue-500">
+        <div class="flex justify-between items-center">
+          <div class="flex-1 space-y-1">
+            <h4 class="font-extrabold text-lg text-gray-900">Toán Cao Cấp</h4>
+            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND001 - Trần Thị C</span></p>
+            <p class="text-xs text-gray-500 pt-1">
+              📅 Mượn: 01/12/2024 | Trả: 14/12/2024
+            </p>
+          </div>
+          <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-500 shadow-sm">
+            ✅ Đã trả đúng hạn
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-red-500 bg-red-50 hover:ring-2 hover:ring-red-200">
+        <div class="flex justify-between items-center">
+          <div class="flex-1 space-y-1">
+            <h4 class="font-extrabold text-lg text-gray-900">Tiếng Anh Cơ Bản</h4>
+            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND002 - Nguyễn Văn D</span></p>
+            <p class="text-xs text-gray-500 pt-1">
+              📅 Mượn: 25/11/2024 | Trả: 12/12/2024
+            </p>
+          </div>
+          <span class="text-xs font-bold bg-red-500 text-white px-3 py-1 rounded-full shadow-lg animate-pulse">
+            ⚠️ Trả muộn 3 ngày
+          </span>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-blue-500">
+        <div class="flex justify-between items-center">
+          <div class="flex-1 space-y-1">
+            <h4 class="font-extrabold text-lg text-gray-900">Vật Lý Đại Cương</h4>
+            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND003 - Lê Thị E</span></p>
+            <p class="text-xs text-gray-500 pt-1">
+              📅 Mượn: 20/11/2024 | Trả: 02/12/2024
+            </p>
+          </div>
+          <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-500 shadow-sm">
+            ✅ Đã trả đúng hạn
+          </span>
+        </div>
+      </div>
+      </div>
+  </div>
+
+  <div id="thongKe" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg hidden">
+    <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center space-x-2 pb-4 border-b-2 border-green-100">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A900.02 900.02 0 0115 5a9 9 0 11-8 8V6a4 4 0 00-4-4"></path></svg>
+      <span>Thống Kê Tổng Quan</span>
+    </h3>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-8">
+      <div class="bg-gray-50 rounded-xl p-6 shadow-md border-l-4 border-blue-500">
+        <h4 class="font-extrabold text-lg text-gray-800 mb-4 flex items-center">
+          📊 Thống Kê Tháng 12/2024
+        </h4>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+            <span class="text-gray-600">Sách được mượn:</span>
+            <span class="font-extrabold text-2xl text-blue-600">28</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+            <span class="text-gray-600">Sách đã trả:</span>
+            <span class="font-extrabold text-2xl text-green-600">25</span>
+          </div>
+          <div class="flex justify-between items-center border-b border-gray-200 pb-2">
+            <span class="text-gray-600">Trả muộn:</span>
+            <span class="font-extrabold text-2xl text-red-600">3</span>
+          </div>
+          <div class="flex justify-between items-center pt-2">
+            <span class="text-gray-600">Đang mượn (Tổng):</span>
+            <span class="font-extrabold text-2xl text-orange-600">3</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 rounded-xl p-6 shadow-md border-l-4 border-yellow-500">
+        <h4 class="font-extrabold text-lg text-gray-800 mb-4 flex items-center">
+          🏆 Top Sách Được Mượn Nhiều
+        </h4>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+              <span class="text-gray-700">1. Lập Trình Web</span>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold shadow-inner">8 lần</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+              <span class="text-gray-700">2. Cơ Sở Dữ Liệu</span>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold shadow-inner">6 lần</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+              <span class="text-gray-700">3. Toán Cao Cấp</span>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold shadow-inner">5 lần</span>
+          </div>
+          <div class="flex justify-between items-center p-2 bg-white rounded-lg shadow-sm hover:shadow-md transition">
+              <span class="text-gray-700">4. Tiếng Anh Giao Tiếp</span>
+              <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold shadow-inner">4 lần</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl p-6 shadow-md border-l-4 border-green-500">
+      <h4 class="font-extrabold text-lg text-gray-800 mb-4 flex items-center space-x-2 pb-2 border-b">
+        👥 Thống Kê Theo Người Dùng
+      </h4>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 shadow-sm">
+          <div>
+            <span class="font-bold text-gray-800">ND001 - Trần Thị C</span>
+            <p class="text-xs text-gray-500">Sinh viên</p>
+          </div>
+          <div class="text-right flex space-x-4">
+            <div class="text-sm">
+              Đã mượn: <span class="font-bold text-blue-600">12 cuốn</span>
+            </div>
+            <div class="text-sm">
+              Trả muộn:
+              <span class="font-bold text-red-600">1 lần</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 shadow-sm">
+          <div>
+            <span class="font-bold text-gray-800">ND002 - Nguyễn Văn D</span>
+            <p class="text-xs text-gray-500">Giảng viên</p>
+          </div>
+          <div class="text-right flex space-x-4">
+            <div class="text-sm">
+              Đã mượn: <span class="font-bold text-blue-600">8 cuốn</span>
+            </div>
+            <div class="text-sm">
+              Trả muộn:
+              <span class="font-bold text-red-600">2 lần</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 shadow-sm">
+          <div>
+            <span class="font-bold text-gray-800">ND003 - Lê Thị E</span>
+            <p class="text-xs text-gray-500">Sinh viên</p>
+          </div>
+          <div class="text-right flex space-x-4">
+            <div class="text-sm">
+              Đã mượn: <span class="font-bold text-blue-600">6 cuốn</span>
+            </div>
+            <div class="text-sm">
+              Trả muộn:
+              <span class="font-bold text-green-600">0 lần</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div
+  id="addBookModal"
+  class="fixed inset-0 modal-backdrop bg-black/70 hidden z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+>
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 transform scale-95 opacity-0 transition-all duration-300 ease-out"
+  >
+    <div class="bg-gradient-to-r from-green-500 to-blue-600 p-6 rounded-t-3xl border-b-4 border-white/50">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+          <div
+            class="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+          >
+            <span class="text-white text-xl font-bold">➕</span>
+          </div>
+          <h3 class="text-2xl font-bold text-white">Thêm Sách Mới</h3>
+        </div>
+        <button
+          onclick="closeAddBookModal()"
+          class="text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+    </div>
+
+    <form onsubmit="addNewBook(event)" class="p-8 space-y-6">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label
+            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          >
+            <span class="mr-2 text-lg">📖</span> Tên Sách
+          </label>
+          <input
+            type="text"
+            name="bookName"
+            placeholder="Ví dụ: Lập Trình Web Cơ Bản"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            required
+          />
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          >
+            <span class="mr-2 text-lg">👤</span> Tác Giả
+          </label>
+          <input
+            type="text"
+            name="author"
+            placeholder="Ví dụ: Nguyễn Văn A"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <label
+            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          >
+            <span class="mr-2 text-lg">🏷️</span> Thể Loại
+          </label>
+          <select
+            name="category"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner bg-white"
+            required
+          >
+            <option value="" disabled selected>Chọn thể loại...</option>
+            <option value="cong-nghe">💻 Công Nghệ</option>
+            <option value="toan-hoc">🔢 Toán Học</option>
+            <option value="ngoai-ngu">🌍 Ngoại Ngữ</option>
+            <option value="van-hoc">📖 Văn Học</option>
+            <option value="khoa-hoc">🔬 Khoa Học</option>
+            <option value="kinh-te">💰 Kinh Tế</option>
+          </select>
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          >
+            <span class="mr-2 text-lg">📦</span> Số Lượng
+          </label>
+          <input
+            type="number"
+            name="quantity"
+            placeholder="Số lượng sách hiện có"
+            min="1"
+            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            required
+          />
+        </div>
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+        >
+          <span class="mr-2 text-lg">📅</span> Năm Xuất Bản
+        </label>
+        <input
+          type="number"
+          name="publishYear"
+          placeholder="Năm xuất bản (Ví dụ: 2024)"
+          min="1900"
+          max="2025"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+        >
+          <span class="mr-2 text-lg">📝</span> Mô Tả (Tùy chọn)
+        </label>
+        <textarea
+          name="description"
+          placeholder="Mô tả ngắn gọn về sách..."
+          rows="4"
+          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 resize-none shadow-inner"
+        ></textarea>
+      </div>
+
+      <div class="flex space-x-4 pt-6">
+        <button
+          type="submit"
+          class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 px-6 rounded-xl font-extrabold text-lg shadow-xl hover:shadow-2xl hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02]"
+        >
+          ➕ Thêm Sách
+        </button>
+        <button
+          type="button"
+          onclick="closeAddBookModal()"
+          class="flex-1 bg-gray-300 text-gray-800 py-4 px-6 rounded-xl hover:bg-gray-400 transition-all duration-300 font-bold text-lg"
+        >
+          ❌ Hủy
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  function showBorrowTab(tabId, element) {
+    // Ẩn toàn bộ nội dung tab
+    document.querySelectorAll('.borrow-content').forEach(content => 
+      content.classList.add('hidden')
+    );
+    // Hiện tab được chọn
+    document.getElementById(tabId).classList.remove('hidden');
+
+    // Cập nhật trạng thái active cho nút
+    document.querySelectorAll('.borrow-tab').forEach(tab => {
+      tab.classList.remove(
+        'bg-green-600', 'text-white', 'shadow-lg', 'scale-[1.02]'
+      );
+      tab.classList.add(
+        'text-gray-700', 'hover:bg-white', 'hover:text-green-600'
+      );
+    });
+
+    // Gán màu xanh cho nút được chọn
+    element.classList.add(
+      'bg-green-600', 'text-white', 'shadow-lg', 'scale-[1.02]'
+    );
+    element.classList.remove(
+      'text-gray-700', 'hover:bg-white', 'hover:text-green-600'
+    );
+  }
+
+  // Khi trang tải, đặt "Đang Mượn" làm tab mặc định
+  document.addEventListener('DOMContentLoaded', () => {
+    const defaultTab = document.getElementById('tabDangMuon');
+    if (defaultTab) showBorrowTab('dangMuon', defaultTab);
+  });
+</script>
