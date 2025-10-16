@@ -1,5 +1,3 @@
-# account/views.py
-
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, authenticate
@@ -7,26 +5,47 @@ from django.contrib.auth import login as auth_login, logout as auth_logout # S�
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm # SỬA 2: Dùng form đăng nhập có sẵn
 from django.db import transaction
-
+from django.contrib.auth.models import User
 from .forms import UserRegisterForm, UserForm, ChangeUserProfileForm
 from .models import UserProfile
 
+
 def register(request):
     if request.method == "POST":
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            # SỬA 3: Hàm save() của form đã tự tạo UserProfile rồi
-            form.save()
-            messages.success(request, "Đăng ký thành công. Vui lòng đăng nhập.")
-            # SỬA 4: Dùng tên URL, không viết cứng đường dẫn
-            return redirect('login') 
-        else:
-            # SỬA 5: Nếu form không hợp lệ, trả về form cũ để hiển thị lỗi
-            messages.error(request, "Vui lòng kiểm tra lại thông tin đăng ký.")
-            return render(request, 'account/register.html', {'form': form})
+        username = request.POST.get("username")
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        phone = request.POST.get("phone")
+        occupation = request.POST.get("occupation")
+        gender = request.POST.get("gender")
+        date_of_birth = request.POST.get("date_of_birth")
+        address = request.POST.get("address")
+        confirm_password = request.POST.get("confirm_password")
+        if password != confirm_password:
+            messages.error(request, "Mật khẩu nhập lại không khớp!")
+            return redirect("/account/register/")
+        # Kiểm tra username đã tồn tại
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Tên đăng nhập đã tồn tại!")
+            return redirect("/account/register/")
+        # Tạo User
+        user = User.objects.create_user(username=username, email=email, password=password)
+        # Tạo UserProfile với tất cả các trường
+        UserProfile.objects.create(
+            user=user,
+            name=name,
+            phone=phone,
+            occupation=occupation,
+            gender=gender ,
+            date_of_birth=date_of_birth or None,
+            address=address
+        )
+        messages.success(request, "Đăng ký thành công! Hãy đăng nhập.")
+        return redirect("/account/login/")
     else:
-        form = UserRegisterForm()
-    return render(request, 'account/register.html', {'form': form})
+        # GET → render template form đăng ký
+        return render(request, "account/register.html")
 
 def login_view(request): # Đổi tên view để không trùng với hàm login
     if request.method == 'POST':

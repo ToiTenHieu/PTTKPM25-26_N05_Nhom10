@@ -4,18 +4,18 @@ from .models import UserProfile
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 
 class UserRegisterForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    name = forms.CharField(max_length=100, required=True)
-    phone = forms.CharField(max_length=15, required=True)
-    occupation = forms.CharField(max_length=100, required=False)
-    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}))
-    gender = forms.ChoiceField(choices=[('male','Nam'), ('female','Nữ'), ('other','Khác')], required=False)
-    class Meta:
+    name = forms.CharField(max_length=100, required=True, label="Họ và tên")
+    email = forms.EmailField(required=True, label="Email")
+    phone = forms.CharField(max_length=15, required=True, label="Số điện thoại")
+    occupation = forms.CharField(max_length=100, required=False, label="Nghề nghiệp")
+    date_of_birth = forms.DateField(required=False, widget=forms.DateInput(attrs={'type': 'date'}), label="Ngày sinh")
+    gender = forms.ChoiceField(choices=[('male', 'Nam'), ('female', 'Nữ'), ('other', 'Khác')], required=False, label="Giới tính")
+    address = forms.CharField(max_length=255, required=False, label="Địa chỉ")
+    class Meta(UserCreationForm.Meta):
         model = User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = UserCreationForm.Meta.fields + ('email',)
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email']
         if commit:
             user.save()
             UserProfile.objects.create(
