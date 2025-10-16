@@ -13,17 +13,21 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-
+from django.utils.timezone import now
 from django.core.paginator import Paginator
 from django.urls import reverse
 
 @login_required
 def librarian_dashboard(request):
     profile = UserProfile.objects.get(user=request.user)
+
+    # ✅ Chỉ cho phép thủ thư truy cập
     if profile.role != 'librarian':
         return redirect('library:home')
 
-    # 👉 Nếu nhấn nút Thêm Người Dùng
+    # ======================================================
+    # 👉 Xử lý khi nhấn "Thêm người dùng"
+    # ======================================================
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
@@ -35,14 +39,14 @@ def librarian_dashboard(request):
         gender = request.POST.get("gender")
         phone = request.POST.get("phone")
 
-        # 1. Tạo User
+        # 1️⃣ Tạo tài khoản User
         user = User.objects.create_user(
             username=username,
             password=password,
             email=email
         )
 
-        # 2. Tạo UserProfile
+        # 2️⃣ Tạo UserProfile tương ứng
         UserProfile.objects.create(
             user=user,
             name=name,
@@ -56,12 +60,13 @@ def librarian_dashboard(request):
 
         return redirect(reverse("librarian:managebook") + "?section=quanLyNguoiDung")
 
-
-    # 👉 Nếu GET: load dữ liệu
+    # ======================================================
+    # 👉 Load dữ liệu hiển thị
+    # ======================================================
     users_only = UserProfile.objects.filter(role='user').order_by("id")
 
-    # --- Thêm phân trang ---
-    paginator = Paginator(users_only, 5)  # 5 user mỗi trang
+    # --- Phân trang người dùng ---
+    paginator = Paginator(users_only, 5)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
@@ -69,37 +74,43 @@ def librarian_dashboard(request):
     categories = Book.objects.values_list('category', flat=True).distinct()
     librarian_name = profile.name or profile.user.username
 
-    # =========================
-    # 👉 Query BorrowRecord để hiển thị trong manageBorrow.html
-    from django.utils.timezone import now
-    records = BorrowRecord.objects.select_related("user", "book").filter(
-        status__in=['borrowed', 'overdue']
-    )
+    # ======================================================
+    # 👉 Lấy danh sách mượn trả
+    # ======================================================
+    records_all = BorrowRecord.objects.select_related("user", "book").all()
 
-    # 👉 Auto update: nếu quá hạn thì chuyển thành "overdue"
+    # --- Tự động cập nhật trạng thái "overdue" ---
     today = now().date()
-    for record in records:
+    for record in records_all:
         if record.due_date and record.due_date < today and record.status == 'borrowed':
             record.status = 'overdue'
             record.save()
 
-    total = records.count()
-    # =========================
+    # --- Phân loại ---
+    records_borrowed = records_all.filter(status__in=['borrowed', 'overdue'])
+    records_history = records_all.filter(status='returned')
 
+    # --- Tổng số bản ghi ---
+    total_borrowed = records_borrowed.count()
+    total_history = records_history.count()
+
+    # ======================================================
+    # 👉 Truyền dữ liệu sang template
+    # ======================================================
     context = {
-        'users': page_obj.object_list,   # user của trang hiện tại
-        'page_obj': page_obj,            # để làm thanh phân trang
+        'users': page_obj.object_list,
+        'page_obj': page_obj,
         'books': books,
         'categories': categories,
         'librarian_name': librarian_name,
         'profile': profile,
-        # 👉 Thêm vào context cho manageBorrow.html
-        'records': records,
-        'total': total,
+        'records_borrowed': records_borrowed,
+        'records_history': records_history,
+        'total_borrowed': total_borrowed,
+        'total_history': total_history,
     }
 
     return render(request, 'managebook.html', context)
-
 
 from django.contrib.auth.models import Group
 
@@ -299,4 +310,35 @@ from .models import BorrowRecord
 
 from django.shortcuts import render
 from .models import BorrowRecord
+# app_name/views.py
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from .models import BorrowRecord # Thay bằng tên model thực tế của bạn
 
+@require_POST
+def return_book_api(request, record_id):
+    try:
+        borrow_record = get_object_or_404(BorrowRecord, pk=record_id)
+        
+        # 1. Cập nhật ngày trả và trạng thái
+        borrow_record.return_date = timezone.now().date()
+        borrow_record.status = 'RETURNED' # Thay 'RETURNED' bằng trạng thái hợp lệ
+        borrow_record.save()
+        
+        # 2. Tăng số lượng sách có sẵn (Nếu cần)
+        # book = borrow_record.book # Giả sử có field 'book' Foreign Key
+        # book.quantity += 1
+        # book.save()
+
+        return JsonResponse({'message': 'Sách đã được trả và trạng thái đã cập nhật.'}, status=200)
+
+    except BorrowRecord.DoesNotExist:
+        return JsonResponse({'error': 'Không tìm thấy bản ghi mượn sách.'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from .models import BorrowRecord

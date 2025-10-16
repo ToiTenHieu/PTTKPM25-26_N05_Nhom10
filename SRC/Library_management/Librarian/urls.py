@@ -9,4 +9,5 @@ urlpatterns = [
     path("api/books/", views.book_list, name="book_list"),
     path("api/books/<int:book_id>/", views.book_detail, name="book_detail"),
     path('managebook/', views.librarian_dashboard, name='managebook'),
+    path('api/return-book/<int:record_id>/', views.return_book_api, name='return_book_api'),
 ]

@@ -36,3 +36,9 @@ class BorrowRecord(models.Model):
 
     def __str__(self):
         return f"Record {self.record_id} - {self.user} - {self.book}"
+    @property
+    def is_returned_late(self):
+        """Kiểm tra xem sách có bị trả muộn (return_date > due_date) không."""
+        if self.return_date and self.return_date > self.due_date:
+            return True
+        return False

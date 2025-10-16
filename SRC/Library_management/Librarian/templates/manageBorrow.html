@@ -43,7 +43,7 @@
     </div>
 
     <div class="max-h-[500px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-      {% for record in records %}
+      {% for record in records_borrowed %}
         <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-md transition-all duration-300 ease-in-out hover:shadow-xl hover:ring-2 
           {% if record.status == 'overdue' %}border-l-8 border-red-600 bg-red-50 hover:ring-red-200{% else %}border-l-8 border-green-600 hover:ring-green-100{% endif %}">
           
@@ -84,9 +84,12 @@
                   🚨 Quá hạn
                 </span>
               {% endif %}
-              <button class="text-sm font-semibold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.05]">
-                ✅ Trả Sách
-              </button>
+<button 
+    onclick="returnBook({{ record.record_id }})"  /* THAY ĐỔI Ở ĐÂY: Thêm hàm gọi JS với ID */
+    class="text-sm font-semibold bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md hover:shadow-lg transform hover:scale-[1.05]"
+  >
+    ✅ Trả Sách
+  </button>
             </div>
           </div>
         </div>
@@ -100,63 +103,78 @@
   </div>
 
 
-  <div id="lichSu" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg hidden">
-    <div class="flex justify-between items-center pb-4 border-b-2 border-green-100 mb-6">
-      <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
-        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"></path></svg>
-        <span>Lịch Sử Giao Dịch</span>
-      </h3>
-      <div class="text-base text-gray-600">
-        Tổng giao dịch: <span class="font-extrabold text-green-600 text-2xl ml-1">15</span>
-      </div>
+<div id="lichSu" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg">
+  <div class="flex justify-between items-center pb-4 border-b-2 border-green-100 mb-6">
+    <h3 class="text-xl font-bold text-gray-800 flex items-center space-x-2">
+      <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253"></path>
+      </svg>
+      <span>Lịch Sử Giao Dịch</span>
+    </h3>
+    <div class="text-base text-gray-600">
+      Tổng giao dịch:
+      <span class="font-extrabold text-green-600 text-2xl ml-1">{{ total_history }}</span>
     </div>
-    <div class="max-h-[500px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-blue-500">
-        <div class="flex justify-between items-center">
-          <div class="flex-1 space-y-1">
-            <h4 class="font-extrabold text-lg text-gray-900">Toán Cao Cấp</h4>
-            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND001 - Trần Thị C</span></p>
-            <p class="text-xs text-gray-500 pt-1">
-              📅 Mượn: 01/12/2024 | Trả: 14/12/2024
-            </p>
-          </div>
-          <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-500 shadow-sm">
-            ✅ Đã trả đúng hạn
-          </span>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-red-500 bg-red-50 hover:ring-2 hover:ring-red-200">
-        <div class="flex justify-between items-center">
-          <div class="flex-1 space-y-1">
-            <h4 class="font-extrabold text-lg text-gray-900">Tiếng Anh Cơ Bản</h4>
-            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND002 - Nguyễn Văn D</span></p>
-            <p class="text-xs text-gray-500 pt-1">
-              📅 Mượn: 25/11/2024 | Trả: 12/12/2024
-            </p>
-          </div>
-          <span class="text-xs font-bold bg-red-500 text-white px-3 py-1 rounded-full shadow-lg animate-pulse">
-            ⚠️ Trả muộn 3 ngày
-          </span>
-        </div>
-      </div>
-
-      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8 border-blue-500">
-        <div class="flex justify-between items-center">
-          <div class="flex-1 space-y-1">
-            <h4 class="font-extrabold text-lg text-gray-900">Vật Lý Đại Cương</h4>
-            <p class="text-sm text-gray-600 flex items-center space-x-1">👤 <span class="font-semibold">ND003 - Lê Thị E</span></p>
-            <p class="text-xs text-gray-500 pt-1">
-              📅 Mượn: 20/11/2024 | Trả: 02/12/2024
-            </p>
-          </div>
-          <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-500 shadow-sm">
-            ✅ Đã trả đúng hạn
-          </span>
-        </div>
-      </div>
-      </div>
   </div>
+
+  <div class="max-h-[500px] overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+    {% for record in records_history %}
+      <div class="bg-white p-5 rounded-xl shadow-md transition-all duration-300 hover:shadow-lg border-l-8
+        {% if record.status == 'returned' %}
+          {% if record.is_returned_late %}
+            border-red-500 bg-red-50 hover:ring-2 hover:ring-red-200
+          {% else %}
+            border-blue-500
+          {% endif %}
+        {% elif record.status == 'borrowed' %}
+          border-yellow-400 bg-yellow-50
+        {% else %}
+          border-red-500 bg-red-50
+        {% endif %}
+      ">
+        <div class="flex justify-between items-center">
+          <div class="flex-1 space-y-1">
+            <h4 class="font-extrabold text-lg text-gray-900">{{ record.book.title }}</h4>
+            <p class="text-sm text-gray-600 flex items-center space-x-1">
+              👤 <span class="font-semibold">{{ record.user.user_id }} - {{ record.user.name }}</span>
+            </p>
+            <p class="text-xs text-gray-500 pt-1">
+              📅 Mượn: {{ record.borrow_date|date:"d/m/Y" }} |
+              Hạn trả: {{ record.due_date|date:"d/m/Y" }}
+              {% if record.return_date %}
+                | Trả: {{ record.return_date|date:"d/m/Y" }}
+              {% endif %}
+            </p>
+          </div>
+
+          {% if record.status == 'returned' %}
+            {% if record.is_returned_late %}
+              <span class="text-xs font-bold bg-red-500 text-white px-3 py-1 rounded-full shadow-lg animate-pulse">
+                ⚠️ Trả muộn {{ record.late_days }} ngày
+              </span>
+            {% else %}
+              <span class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full border border-green-500 shadow-sm">
+                ✅ Đã trả đúng hạn
+              </span>
+            {% endif %}
+          {% elif record.status == 'borrowed' %}
+            <span class="text-xs font-bold bg-yellow-200 text-yellow-800 px-3 py-1 rounded-full border border-yellow-400 shadow-sm">
+              🕓 Đang mượn
+            </span>
+          {% elif record.status == 'overdue' %}
+            <span class="text-xs font-bold bg-red-500 text-white px-3 py-1 rounded-full shadow-lg animate-pulse">
+              ⚠️ Quá hạn trả
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-gray-500">📖 Chưa có lịch sử mượn sách nào.</p>
+    {% endfor %}
+  </div>
+</div>
+
 
   <div id="thongKe" class="borrow-content bg-white border border-gray-200 rounded-xl p-6 shadow-lg hidden">
     <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center space-x-2 pb-4 border-b-2 border-green-100">
@@ -448,4 +466,68 @@
     const defaultTab = document.getElementById('tabDangMuon');
     if (defaultTab) showBorrowTab('dangMuon', defaultTab);
   });
+</script>
+<script>
+async function returnBook(recordId) {
+    if (!confirm(`Bạn có chắc chắn muốn xác nhận trả sách cho bản ghi ID: ${recordId}?`)) {
+        return;
+    }
+    
+    // Đảm bảo CSRF token tồn tại trước khi dùng (Rất quan trọng)
+    const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (!csrfElement) {
+        alert('Lỗi: Không tìm thấy CSRF token. Vui lòng kiểm tra template.');
+        console.error('CSRF token element not found.');
+        return;
+    }
+    const csrfToken = csrfElement.value;
+    const url = `/api/return-book/${recordId}/`;
+
+    // Sử dụng khối try/catch chỉ cho mục đích DEBUG và thông báo lỗi rõ ràng hơn
+    try {
+        const response = await fetch(`/librarian/api/return-book/${recordId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ action: 'return' }) 
+        });
+
+        if (response.ok) { // Status code 200-299 (Thành công)
+            alert('Đã xác nhận trả sách thành công!');
+            location.reload(); 
+            return;
+        }
+
+        // --- XỬ LÝ LỖI SERVER (4xx hoặc 5xx) ---
+        
+        // 1. Kiểm tra header để tránh lỗi SyntaxError (khi trả về HTML thay vì JSON)
+        const contentType = response.headers.get('content-type');
+        
+        if (contentType && contentType.includes('application/json')) {
+            // Phản hồi JSON (Như mong đợi từ JsonResponse)
+            const errorData = await response.json();
+            alert(`Lỗi Server (${response.status}): ${errorData.error || response.statusText}`);
+        } else {
+            // Phản hồi HTML (Lỗi 404/500 mặc định của Django, gây ra SyntaxError)
+            
+            let errorMessage = `Lỗi HTTP ${response.status} xảy ra.`;
+            if (response.status === 404) {
+                 errorMessage = 'Lỗi 404: Không tìm thấy đường dẫn API. Vui lòng kiểm tra URLs trong Django.';
+            } else if (response.status === 403) {
+                 errorMessage = 'Lỗi 403: CSRF Token không hợp lệ. Vui lòng kiểm tra thiết lập.';
+            }
+
+            alert(errorMessage);
+            // Log lỗi HTML ra console để debug chi tiết
+            console.error(`Phản hồi lỗi ${response.status} (Không phải JSON) cho URL: ${url}`, await response.text());
+        }
+
+    } catch (error) {
+        // Khối catch này chỉ nên bắt các lỗi mạng thực sự (Failed to fetch) hoặc lỗi JS
+        console.error('Lỗi Kết Nối hoặc Code:', error);
+        alert('Lỗi kết nối đến server. (Kiểm tra server Django đang chạy?)');
+    }
+}
 </script>
