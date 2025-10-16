@@ -47,28 +47,42 @@ def register(request):
         # GET → render template form đăng ký
         return render(request, "account/register.html")
 
-def login_view(request): # Đổi tên view để không trùng với hàm login
+from django.contrib.auth import authenticate, login as auth_login
+from django.contrib.auth.forms import AuthenticationForm
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import UserProfile  # đảm bảo đã import đúng model
+
+def login_view(request):
     if request.method == 'POST':
-        # SỬA 6: Dùng AuthenticationForm để xử lý và xác thực an toàn hơn
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            auth_login(request, user) # Dùng auth_login đã import
-            
-            # Logic chuyển hướng vẫn giữ nguyên
-            profile = UserProfile.objects.get(user=user)
-            if profile.role == 'librarian' or user.is_superuser:
-                # Có thể chuyển hướng tới trang admin/dashboard riêng
-                return redirect('home')
+            auth_login(request, user)
+
+            # 🔑 Lấy role từ UserProfile
+            try:
+                profile = UserProfile.objects.get(user=user)
+            except UserProfile.DoesNotExist:
+                messages.error(request, "Không tìm thấy thông tin người dùng.")
+                return redirect('login')
+
+            # 🔁 Chuyển hướng theo vai trò
+            if profile.role == 'librarian':
+                return redirect('Librarian:managebook')  # giao diện thủ thư
+            elif user.is_superuser:
+                return redirect('/admin/')               # admin
             else:
-                return redirect('home')
+                return redirect('library:home')          # người dùng thường
+
         else:
             messages.error(request, "Tên đăng nhập hoặc mật khẩu không đúng.")
     else:
         form = AuthenticationForm()
-        
-    # SỬA 7: Luôn render template cho request GET hoặc khi form không hợp lệ
+
+    # Luôn render lại form khi GET hoặc form không hợp lệ
     return render(request, 'account/login.html', {'form': form})
+
 
 def logout_view(request): # Đổi tên view
     auth_logout(request) # Dùng auth_logout đã import
