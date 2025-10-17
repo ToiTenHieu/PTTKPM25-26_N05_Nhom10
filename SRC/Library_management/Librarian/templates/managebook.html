@@ -358,6 +358,21 @@
 {% include "bookstatistics.html" %}
 
 <script>
+  // Map từ emoji → slug
+  const categoryMap = {
+    "💻 Công Nghệ": "cong-nghe",
+    "🔢 Toán Học": "toan-hoc",
+    "🌍 Ngoại Ngữ": "ngoai-ngu",
+    "📖 Văn Học": "van-hoc",
+    "🔬 Khoa Học": "khoa-hoc",
+    "💰 Kinh Tế": "kinh-te",
+  };
+
+  // Map ngược từ slug → emoji
+  const reverseCategoryMap = Object.fromEntries(
+    Object.entries(categoryMap).map(([key, value]) => [value, key])
+  );
+
   // Mở modal và load dữ liệu sách
   function editBook(bookId) {
     console.log("Book ID nhận được:", bookId);
@@ -368,20 +383,15 @@
         return response.json();
       })
       .then((data) => {
-        const categoryMap = {
-          "💻 Công Nghệ": "cong-nghe",
-          "🔢 Toán Học": "toan-hoc",
-          "🌍 Ngoại Ngữ": "ngoai-ngu",
-          "📖 Văn Học": "van-hoc",
-          "🔬 Khoa Học": "khoa-hoc",
-          "💰 Kinh Tế": "kinh-te",
-        };
         // Gán dữ liệu vào form
         document.getElementById("editBookId").value = data.book_id;
         document.getElementById("editTitle").value = data.title;
         document.getElementById("editAuthor").value = data.author;
+
+        // ⚙️ Chuyển từ emoji -> slug để hiển thị đúng option trong <select>
         document.getElementById("editCategory").value =
-          categoryMap[data.category] || data.category || "";
+          categoryMap[data.category] || "";
+
         document.getElementById("editQuantity").value = data.quantity;
         document.getElementById("editYear").value = data.year || "";
         document.getElementById("editDescription").value =
@@ -409,10 +419,16 @@
 
     const bookId = document.getElementById("editBookId").value;
 
+    // Lấy slug từ form (vd: "van-hoc")
+    const categorySlug = document.getElementById("editCategory").value;
+
+    // ⚙️ Chuyển slug -> emoji + tiếng Việt
+    const categoryFull = reverseCategoryMap[categorySlug] || categorySlug;
+
     const formData = {
       title: document.getElementById("editTitle").value,
       author: document.getElementById("editAuthor").value,
-      category: document.getElementById("editCategory").value,
+      category: categoryFull, // ✅ Lưu emoji vào DB
       quantity: parseInt(document.getElementById("editQuantity").value),
       year: parseInt(document.getElementById("editYear").value),
       description: document.getElementById("editDescription").value,
@@ -457,6 +473,7 @@
     return cookieValue;
   }
 </script>
+
 <script>
   function deleteBook(bookId) {
   Swal.fire({

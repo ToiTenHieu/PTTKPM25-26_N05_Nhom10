@@ -288,26 +288,26 @@
 </div>
 <div
   id="addBookModal"
-  class="fixed inset-0 modal-backdrop bg-black/70 hidden z-50 flex items-center justify-center p-4 transition-opacity duration-300"
+  class="fixed inset-0 modal-backdrop bg-black/50 hidden z-50 flex items-center justify-center p-4"
 >
   <div
-    class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 transform scale-95 opacity-0 transition-all duration-300 ease-out"
+    class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl mx-4 slide-in-right border border-white/20"
   >
-    <div class="bg-gradient-to-r from-green-500 to-blue-600 p-6 rounded-t-3xl border-b-4 border-white/50">
+    <div class="bg-gradient-to-r from-blue-500 to-purple-600 p-6 rounded-t-3xl">
       <div class="flex justify-between items-center">
         <div class="flex items-center space-x-3">
           <div
-            class="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg"
+            class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center"
           >
-            <span class="text-white text-xl font-bold">➕</span>
+            <span class="text-white text-xl">📚</span>
           </div>
           <h3 class="text-2xl font-bold text-white">Thêm Sách Mới</h3>
         </div>
         <button
           onclick="closeAddBookModal()"
-          class="text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
+          class="text-white/80 hover:text-white text-3xl transition-colors"
         >
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+          ×
         </button>
       </div>
     </div>
@@ -316,30 +316,30 @@
       <div class="grid md:grid-cols-2 gap-6">
         <div>
           <label
-            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+            class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
           >
-            <span class="mr-2 text-lg">📖</span> Tên Sách
+            <span class="mr-2">📖</span> Tên Sách
           </label>
           <input
             type="text"
             name="bookName"
-            placeholder="Ví dụ: Lập Trình Web Cơ Bản"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            placeholder="Nhập tên sách..."
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
             required
           />
         </div>
 
         <div>
           <label
-            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+            class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
           >
-            <span class="mr-2 text-lg">👤</span> Tác Giả
+            <span class="mr-2">👤</span> Tác Giả
           </label>
           <input
             type="text"
             name="author"
-            placeholder="Ví dụ: Nguyễn Văn A"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            placeholder="Nhập tên tác giả..."
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
             required
           />
         </div>
@@ -348,16 +348,16 @@
       <div class="grid md:grid-cols-2 gap-6">
         <div>
           <label
-            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+            class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
           >
-            <span class="mr-2 text-lg">🏷️</span> Thể Loại
+            <span class="mr-2">🏷️</span> Thể Loại
           </label>
           <select
             name="category"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner bg-white"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
             required
           >
-            <option value="" disabled selected>Chọn thể loại...</option>
+            <option value="">Chọn thể loại...</option>
             <option value="cong-nghe">💻 Công Nghệ</option>
             <option value="toan-hoc">🔢 Toán Học</option>
             <option value="ngoai-ngu">🌍 Ngoại Ngữ</option>
@@ -369,16 +369,16 @@
 
         <div>
           <label
-            class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+            class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
           >
-            <span class="mr-2 text-lg">📦</span> Số Lượng
+            <span class="mr-2">📦</span> Số Lượng
           </label>
           <input
             type="number"
             name="quantity"
-            placeholder="Số lượng sách hiện có"
-            min="1"
-            class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+            placeholder="Nhập số lượng..."
+            min="0"
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
             required
           />
         </div>
@@ -386,46 +386,46 @@
 
       <div>
         <label
-          class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
         >
-          <span class="mr-2 text-lg">📅</span> Năm Xuất Bản
+          <span class="mr-2">📅</span> Năm Xuất Bản
         </label>
         <input
           type="number"
           name="publishYear"
-          placeholder="Năm xuất bản (Ví dụ: 2024)"
+          placeholder="Nhập năm xuất bản..."
           min="1900"
-          max="2025"
-          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 shadow-inner"
+          max="2024"
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300"
           required
         />
       </div>
 
       <div>
         <label
-          class="block text-sm font-extrabold text-gray-700 mb-2 flex items-center"
+          class="block text-sm font-bold text-gray-700 mb-3 flex items-center"
         >
-          <span class="mr-2 text-lg">📝</span> Mô Tả (Tùy chọn)
+          <span class="mr-2">📝</span> Mô Tả (Tùy chọn)
         </label>
         <textarea
           name="description"
-          placeholder="Mô tả ngắn gọn về sách..."
+          placeholder="Nhập mô tả ngắn về sách..."
           rows="4"
-          class="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-all duration-300 resize-none shadow-inner"
+          class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 resize-none"
         ></textarea>
       </div>
 
       <div class="flex space-x-4 pt-6">
         <button
           type="submit"
-          class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-4 px-6 rounded-xl font-extrabold text-lg shadow-xl hover:shadow-2xl hover:from-green-600 hover:to-green-700 transition-all duration-300 transform hover:scale-[1.02]"
+          class="flex-1 btn-primary text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg"
         >
           ➕ Thêm Sách
         </button>
         <button
           type="button"
           onclick="closeAddBookModal()"
-          class="flex-1 bg-gray-300 text-gray-800 py-4 px-6 rounded-xl hover:bg-gray-400 transition-all duration-300 font-bold text-lg"
+          class="flex-1 bg-gradient-to-r from-gray-500 to-gray-600 text-white py-4 px-6 rounded-xl hover:shadow-lg transition-all duration-300 font-bold text-lg"
         >
           ❌ Hủy
         </button>
