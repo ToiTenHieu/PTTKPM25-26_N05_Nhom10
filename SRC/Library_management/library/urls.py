@@ -14,5 +14,8 @@ urlpatterns = [
     path('process_payment/', views.process_payment, name='process_payment'),
     path('payment_done/', views.payment_done, name='payment_done'),
     path('digital/', views.digital, name='digital'),
+    path('about/', views.about, name='about'),
+    path('borrow_book/', views.borrow_book, name='borrow_book'),
+    path('book-detail/<int:book_id>/', views.book_detail_view, name='book_detail_view'),
     
 ]

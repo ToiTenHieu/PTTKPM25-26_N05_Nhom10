@@ -180,8 +180,6 @@ def digital(request):
 
 
 
-def about(request):
-    return render(request, 'library/about.html')
 =======
 from datetime import timedelta
 from datetime import datetime
@@ -283,6 +281,7 @@ def book_detail_view(request, book_id):
         if not request.user.is_authenticated:
             # Chuyển hướng nếu người dùng chưa đăng nhập
             return redirect('login') 
+            return redirect('account:login') 
             
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
@@ -320,4 +319,7 @@ def book_detail_view(request, book_id):
 from django.db.models import Avg
 from .models import Review # Cần import Model Review
 
->>>>>>> 3c338832213aaceaa9b99d41adcca83f821bedb4
+def about(request):
+    return render(request, 'library/about.html')
+def borrow_book(request):
+    return render(request, 'library/borrow_book.html')

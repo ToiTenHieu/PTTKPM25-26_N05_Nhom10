@@ -58,6 +58,7 @@ def login_view(request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+<<<<<<< Updated upstream
             auth_login(request, user)
 
             # 🔑 Lấy role từ UserProfile
@@ -75,6 +76,17 @@ def login_view(request):
             else:
                 return redirect('library:home')          # người dùng thường
 
+=======
+            auth_login(request, user) # Dùng auth_login đã import
+            
+            # Logic chuyển hướng vẫn giữ nguyên
+            profile = UserProfile.objects.get(user=user)
+            if profile.role == 'librarian' or user.is_superuser:
+                # Có thể chuyển hướng tới trang admin/dashboard riêng
+                return redirect('library:home')
+            else:
+                return redirect('library:home')
+>>>>>>> Stashed changes
         else:
             messages.error(request, "Tên đăng nhập hoặc mật khẩu không đúng.")
     else:
