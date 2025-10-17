@@ -2,18 +2,68 @@ from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 from Librarian.models import Book
 from django.contrib import messages
-
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from Librarian.models import Book, BorrowRecord
+from account.models import UserProfile
 def catalog(request):
-    books = Book.objects.all().order_by("-book_id")   # lấy danh sách sách
-    paginator = Paginator(books, 8)  # 8 sách / trang
+    # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+    if not request.user.is_authenticated:
+        return redirect("account:logout")
+
+    # Lấy danh sách sách
+    books = Book.objects.all().order_by("-book_id")
+    paginator = Paginator(books, 8)  # 8 sách mỗi trang
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "library/catalog.html", {"page_obj": page_obj})
+    # Lấy UserProfile theo user hiện tại
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return redirect("account:logout")  # nếu không có hồ sơ thì về đăng nhập lại
+
+    # Truyền dữ liệu ra template
+    context = {
+        "user_profile": user_profile,
+        "max_days": getattr(user_profile, "max_days", 10),  # fallback mặc định
+        "page_obj": page_obj,
+    }
+    return render(request, "library/catalog.html", context)
+
 
 def home(request):
-    return render(request, 'library/home.html')
+    # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+    if not request.user.is_authenticated:
+        return redirect("account:logout")
+
+    # Lấy danh sách sách + tính điểm trung bình
+    books_with_rating = Book.objects.annotate(
+        avg_rating=Avg('reviews__rating')  # ✅ dùng đúng related_name của Review
+    ).order_by("-book_id")
+
+    # Phân trang
+    paginator = Paginator(books_with_rating, 8)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Lấy UserProfile
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return redirect("login")
+
+    # Truyền dữ liệu ra template
+    context = {
+        "user_profile": user_profile,
+        "max_days": getattr(user_profile, "max_days", 10),
+        "page_obj": page_obj,  # ✅ chứa cả avg_rating rồi
+    }
+    return render(request, "library/home.html", context)
 
 def services(request):
     return render(request, 'library/services.html')
@@ -126,3 +176,140 @@ def payment_done(request):
 
 def digital(request):
     return render(request, 'library/digital.html')
+from datetime import timedelta
+from datetime import datetime
+
+
+@login_required
+def borrow_book(request):
+    if request.method == "POST":
+        import json
+        data = json.loads(request.body)
+        book_id = data.get("book_id")
+        borrow_date = data.get("borrow_date")
+        return_date = data.get("return_date")
+        quantity = int(data.get("quantity", 1))
+
+        try:
+            book = Book.objects.get(pk=book_id)
+            user_profile = UserProfile.objects.get(user=request.user)
+
+            # 🧭 Lấy thông tin gói thành viên
+            membership_state = user_profile.get_membership_state()
+
+            # 🧮 1️⃣ Đếm số sách người này đang mượn (chưa trả)
+            current_borrowed = BorrowRecord.objects.filter(
+                user=user_profile,
+                status__in=["borrowed", "overdue"]
+            ).count()
+
+            # Giới hạn số sách theo gói
+            if current_borrowed + quantity > membership_state.max_books:
+                return JsonResponse({
+                    "success": False,
+                    "message": f"Gói {membership_state.name} chỉ cho phép mượn tối đa {membership_state.max_books} cuốn sách. "
+                               f"Hiện bạn đang mượn {current_borrowed} cuốn."
+                })
+
+            # 🕒 2️⃣ Kiểm tra số ngày không vượt quá giới hạn
+            borrow_dt = datetime.strptime(borrow_date, "%Y-%m-%d").date()
+            return_dt = datetime.strptime(return_date, "%Y-%m-%d").date()
+            delta_days = (return_dt - borrow_dt).days
+
+            if delta_days > membership_state.max_days:
+                return JsonResponse({
+                    "success": False,
+                    "message": f"Gói {membership_state.name} chỉ được mượn tối đa {membership_state.max_days} ngày."
+                })
+
+            # 📚 3️⃣ Kiểm tra tồn kho
+            if book.quantity < quantity:
+                return JsonResponse({
+                    "success": False,
+                    "message": "Không đủ số lượng sách trong kho."
+                })
+
+            # 💾 4️⃣ Ghi vào bảng mượn
+            BorrowRecord.objects.create(
+                user=user_profile,
+                book=book,
+                borrow_date=borrow_date,
+                due_date=return_date,
+                status="borrowed"
+            )
+
+            # 🔄 5️⃣ Cập nhật số lượng sách
+            book.quantity -= quantity
+            if book.quantity <= 0:
+                book.status = "unavailable"
+            book.save()
+
+            return JsonResponse({
+                "success": True,
+                "message": "Mượn sách thành công!"
+            })
+
+        except Exception as e:
+            return JsonResponse({
+                "success": False,
+                "message": f"Lỗi: {str(e)}"
+            })
+
+    return JsonResponse({
+        "success": False,
+        "message": "Phương thức không hợp lệ."
+    })
+from django.shortcuts import render, get_object_or_404
+# library/views.py
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.urls import reverse
+from django.db.models import Avg # Cần thiết để tính điểm trung bình
+from .models import Book, Review
+
+def book_detail_view(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
+    
+    # 1. Xử lý Form Đánh Giá
+    if request.method == 'POST':
+        if not request.user.is_authenticated:
+            # Chuyển hướng nếu người dùng chưa đăng nhập
+            return redirect('login') 
+            
+        rating = request.POST.get('rating')
+        comment = request.POST.get('comment')
+        
+        # Tạo hoặc Cập nhật đánh giá
+        Review.objects.update_or_create(
+            book=book,
+            user=request.user,
+            defaults={'rating': rating, 'comment': comment}
+        )
+        messages.success(request, 'Cảm ơn bạn đã gửi đánh giá!')
+        return redirect(reverse('library:book_detail_view', args=[book_id]))
+
+    # 2. Truy vấn dữ liệu cho Template (GET)
+    
+    # Lấy tất cả đánh giá cho sách này
+    reviews = book.reviews.all()
+    
+    # Tính điểm trung bình
+    avg_rating = reviews.aggregate(Avg('rating'))['rating__avg']
+    
+    # Kiểm tra xem người dùng hiện tại đã đánh giá chưa
+    user_review = None
+    if request.user.is_authenticated:
+        user_review = reviews.filter(user=request.user).first()
+    
+    context = {
+        'book': book,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'user_review': user_review, # Đánh giá của người dùng hiện tại
+    }
+    
+    return render(request, 'library/book_detail.html', context)
+from django.db.models import Avg
+from .models import Review # Cần import Model Review
+

@@ -3,6 +3,10 @@
 class MembershipState:
     """Lớp cơ sở (interface) cho các trạng thái thành viên"""
     @property
+    def name(self):
+        return self.__class__.__name__.replace("State", "")
+
+    @property
     def max_books(self):
         raise NotImplementedError
 
@@ -16,6 +20,7 @@ class MembershipState:
 
     def has_priority(self):
         return False
+
 
 
 class BasicState(MembershipState):

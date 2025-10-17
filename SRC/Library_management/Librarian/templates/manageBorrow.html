@@ -141,7 +141,7 @@
             </p>
           </div>
 
-          {% if record.status == 'returned' %}
+          {% if record.status == 'RETURNED' %}
             {% if record.is_returned_late %}
               <span class="text-xs font-bold bg-red-500 text-white px-3 py-1 rounded-full shadow-lg animate-pulse">
                 ⚠️ Trả muộn {{ record.late_days }} ngày
