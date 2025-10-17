@@ -60,7 +60,7 @@
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Gia hạn online</li>
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Đặt trước sách</li>
                     </ul>
-                    <a href="{% url 'library:digital' %}">
+                    <a href="{% url 'library:about' %}">
                         <button class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
                             Tìm hiểu thêm
                         </button>
@@ -78,9 +78,11 @@
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Cơ sở dữ liệu học thuật</li>
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Truy cập 24/7</li>
                     </ul>
-                    <button class="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors">
-                        Truy cập ngay
-                    </button>
+                    <a href="{% url 'library:digital' %}">
+                        <button class="w-full bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition-colors">
+                            Truy cập ngay
+                        </button>
+                    </a>
                 </div>
 
                 <div class="service-card bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-xl transition-transform duration-300 hover:shadow-lg">

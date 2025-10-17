@@ -126,3 +126,8 @@ def payment_done(request):
 
 def digital(request):
     return render(request, 'library/digital.html')
+
+
+
+def about(request):
+    return render(request, 'library/about.html')
