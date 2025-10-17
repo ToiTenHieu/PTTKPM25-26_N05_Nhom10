@@ -176,11 +176,6 @@ def payment_done(request):
 
 def digital(request):
     return render(request, 'library/digital.html')
-<<<<<<< HEAD
-
-
-
-=======
 from datetime import timedelta
 from datetime import datetime
 
@@ -280,7 +275,6 @@ def book_detail_view(request, book_id):
     if request.method == 'POST':
         if not request.user.is_authenticated:
             # Chuyển hướng nếu người dùng chưa đăng nhập
-            return redirect('login') 
             return redirect('account:login') 
             
         rating = request.POST.get('rating')
