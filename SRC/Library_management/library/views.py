@@ -2,18 +2,68 @@ from django.shortcuts import render,redirect
 from django.core.paginator import Paginator
 from Librarian.models import Book
 from django.contrib import messages
-
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from Librarian.models import Book, BorrowRecord
+from account.models import UserProfile
 def catalog(request):
-    books = Book.objects.all().order_by("-book_id")   # lấy danh sách sách
-    paginator = Paginator(books, 8)  # 8 sách / trang
+    # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+    if not request.user.is_authenticated:
+        return redirect("account:logout")
+
+    # Lấy danh sách sách
+    books = Book.objects.all().order_by("-book_id")
+    paginator = Paginator(books, 8)  # 8 sách mỗi trang
 
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    return render(request, "library/catalog.html", {"page_obj": page_obj})
+    # Lấy UserProfile theo user hiện tại
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return redirect("account:logout")  # nếu không có hồ sơ thì về đăng nhập lại
+
+    # Truyền dữ liệu ra template
+    context = {
+        "user_profile": user_profile,
+        "max_days": getattr(user_profile, "max_days", 10),  # fallback mặc định
+        "page_obj": page_obj,
+    }
+    return render(request, "library/catalog.html", context)
+
 
 def home(request):
-    return render(request, 'library/home.html')
+    # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
+    if not request.user.is_authenticated:
+        return redirect("account:logout")
+
+    # Lấy danh sách sách + tính điểm trung bình
+    books_with_rating = Book.objects.annotate(
+        avg_rating=Avg('reviews__rating')  # ✅ dùng đúng related_name của Review
+    ).order_by("-book_id")
+
+    # Phân trang
+    paginator = Paginator(books_with_rating, 8)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    # Lấy UserProfile
+    try:
+        user_profile = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return redirect("login")
+
+    # Truyền dữ liệu ra template
+    context = {
+        "user_profile": user_profile,
+        "max_days": getattr(user_profile, "max_days", 10),
+        "page_obj": page_obj,  # ✅ chứa cả avg_rating rồi
+    }
+    return render(request, "library/home.html", context)
 
 def services(request):
     return render(request, 'library/services.html')
@@ -126,8 +176,3 @@ def payment_done(request):
 
 def digital(request):
     return render(request, 'library/digital.html')
-
-
-
-def about(request):
-    return render(request, 'library/about.html')

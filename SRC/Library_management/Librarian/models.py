@@ -42,3 +42,13 @@ class BorrowRecord(models.Model):
         if self.return_date and self.return_date > self.due_date:
             return True
         return False
+    @property
+    def late_days(self):
+        if self.return_date and self.due_date:
+            delay = (self.return_date - self.due_date).days
+            return delay if delay > 0 else 0
+        elif self.status == 'overdue' and self.due_date:
+            # Nếu chưa trả mà đã quá hạn
+            delay = (date.today() - self.due_date).days
+            return delay if delay > 0 else 0
+        return 0

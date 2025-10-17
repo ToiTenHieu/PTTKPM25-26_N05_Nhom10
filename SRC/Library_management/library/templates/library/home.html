@@ -56,25 +56,172 @@
                 <h3 class="text-3xl font-bold text-gray-900 mb-4">Danh mục sách nổi bật</h3>
                 <p class="text-gray-600 max-w-2xl mx-auto">Khám phá những cuốn sách được yêu thích nhất tại thư viện</p>
             </div>
+<section class="py-16 bg-white">
+    <div class="mb-8 flex flex-col items-center">
+        <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center justify-center">
+            <span class="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <span class="text-white text-sm">🏷️</span>
+            </span>
+            Lọc Theo Thể Loại
+        </h3>
 
-            <!-- Category Filter -->
-            <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <button onclick="filterBooks('all')" class="filter-btn bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition-colors">
-                    Tất cả
-                </button>
-                <button onclick="filterBooks('fiction')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
-                    Tiểu thuyết
-                </button>
-                <button onclick="filterBooks('science')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
-                    Khoa học
-                </button>
-                <button onclick="filterBooks('history')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
-                    Lịch sử
-                </button>
-                <button onclick="filterBooks('technology')" class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full hover:bg-gray-300 transition-colors">
-                    Công nghệ
-                </button>
+        <div class="flex flex-wrap justify-center gap-3">
+            <button
+                onclick="filterBooks('all')"
+                class="category-btn filter-btn bg-gradient-to-r from-blue-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+                ✨ Tất Cả
+            </button>
+            <button
+                onclick="filterBooks('cong-nghe')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                💻 Công Nghệ
+            </button>
+            <button
+                onclick="filterBooks('toan-hoc')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                🔢 Toán Học
+            </button>
+            <button
+                onclick="filterBooks('ngoai-ngu')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                🌍 Ngoại Ngữ
+            </button>
+            <button
+                onclick="filterBooks('van-hoc')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                📖 Văn Học
+            </button>
+            <button
+                onclick="filterBooks('khoa-hoc')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                🔬 Khoa Học
+            </button>
+            <button
+                onclick="filterBooks('kinh-te')"
+                class="category-btn filter-btn bg-white text-gray-700 px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-gradient-to-r hover:from-blue-500 hover:to-purple-600 hover:text-white transition-all duration-300 border border-gray-200"
+            >
+                💰 Kinh Tế
+            </button>
+        </div>
+    </div>
+
+ <div class="container mx-auto px-6 py-8">
+    <div
+        id="bookList"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-stretch"
+    >
+        {% for book in page_obj %}
+        <div
+            class="book-item book-card h-full flex flex-col p-6 rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl hover:scale-[1.01] border border-gray-100"
+            data-category="{{ book.category|slugify }}"
+        >
+            <div class="flex flex-col flex-grow">
+                
+                <div class="flex items-start justify-between mb-4">
+                    
+                    <div class="flex items-start flex-1 mr-3">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center flex-shrink-0 mr-3"
+                        >
+                            <span class="text-white text-lg"> 📚 </span>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 line-clamp-3 overflow-hidden break-words leading-tight flex-grow">
+                            {{ book.title }}
+                        </h4>
+                    </div>
+
+                    <div class="flex-shrink-0">
+                        <span class="text-sm font-bold bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full whitespace-nowrap">
+                            {% if book.avg_rating %}
+                            ⭐️ {{ book.avg_rating|floatformat:1 }} / 5.0
+                            {% else %}
+                            Mới
+                            {% endif %}
+                        </span>
+                    </div>
+                </div> 
+                
+                <div class="space-y-2 text-gray-600 text-sm mb-4 flex-grow">
+                    <p class="flex items-center">
+                        <span class="mr-2 text-base">👤</span>
+                        <span>Tác giả:</span>
+                        <span class="font-semibold ml-1">{{ book.author }}</span>
+                    </p>
+                    <p class="flex items-center">
+                        <span class="mr-2 text-base">🏷️</span>
+                        <span>Thể loại:</span>
+                        <span class="font-semibold ml-1">{{ book.category }}</span>
+                    </p>
+                    <p class="flex items-center">
+                        <span class="mr-2 text-base">📅</span>
+                        <span>Năm:</span>
+                        <span class="font-semibold ml-1">{{ book.year }}</span>
+                    </p>
+                </div>
+
+                <div class="flex justify-between items-center pt-3 border-t border-gray-100 mt-auto">
+                    <div>
+                        {% if book.quantity > 5 %}
+                        <span
+                            class="status-badge bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap"
+                        >
+                            ✅ Còn hàng
+                        </span>
+                        {% elif book.quantity > 0 %}
+                        <span
+                            class="status-badge bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap"
+                        >
+                            ⚠️ Sắp hết
+                        </span>
+                        {% else %}
+                        <span
+                            class="status-badge bg-red-100 text-red-800 px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap"
+                        >
+                            ❌ Hết hàng
+                        </span>
+                        {% endif %}
+                    </div>
+                    
+                    <a
+                        href="{% url 'library:book_detail_view' book.book_id %}" 
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-300 text-sm font-bold whitespace-nowrap text-center"
+                    >
+                        Chi tiết
+                    </a>
+                </div>
             </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</section>
+
+    <div class="flex justify-center mt-6 mb-12 space-x-2">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}"
+       class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">⬅ Trước</a>
+  {% endif %}
+
+  {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+      <span class="px-3 py-1 bg-purple-500 text-white rounded">{{ num }}</span>
+    {% else %}
+      <a href="?page={{ num }}"
+         class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">{{ num }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}"
+       class="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300">Sau ➡</a>
+  {% endif %}
+</div>
 
             <!-- Books Grid -->
             <div id="booksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -166,53 +313,95 @@
             </div>
         </div>
     </section>
-    <script>
-        // Sample book data
-        const books = [
-            { id: 1, title: "Đắc Nhân Tâm", author: "Dale Carnegie", category: "fiction", available: true, rating: 4.8 },
-            { id: 2, title: "Sapiens", author: "Yuval Noah Harari", category: "history", available: true, rating: 4.9 },
-            { id: 3, title: "Tư Duy Nhanh Và Chậm", author: "Daniel Kahneman", category: "science", available: false, rating: 4.7 },
-            { id: 4, title: "Clean Code", author: "Robert C. Martin", category: "technology", available: true, rating: 4.6 },
-            { id: 5, title: "Nhà Giả Kim", author: "Paulo Coelho", category: "fiction", available: true, rating: 4.5 },
-            { id: 6, title: "Lược Sử Thời Gian", author: "Stephen Hawking", category: "science", available: true, rating: 4.8 },
-            { id: 7, title: "Việt Nam Sử Lược", author: "Trần Trọng Kim", category: "history", available: true, rating: 4.4 },
-            { id: 8, title: "JavaScript: The Good Parts", author: "Douglas Crockford", category: "technology", available: false, rating: 4.3 }
-        ];
+    
+</div>
+ <script>
+        // Extended book data
+
+
+        let currentPage = 1;
+        let itemsPerPage = 12;
+        let currentView = 'grid';
 
         // Display books
-        function displayBooks(booksToShow) {
+        function displayBooks(booksToShow, page = 1) {
+            const startIndex = (page - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const paginatedBooks = booksToShow.slice(startIndex, endIndex);
+            
             const grid = document.getElementById('booksGrid');
-            grid.innerHTML = booksToShow.map(book => `
-                <div class="book-card bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg">
-                    <div class="h-48 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
-                        <span class="text-white text-4xl">📚</span>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="font-semibold text-lg mb-2 text-gray-900">${book.title}</h4>
-                        <p class="text-gray-600 mb-3">Tác giả: ${book.author}</p>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-1">
-                                <span class="text-yellow-400">⭐</span>
-                                <span class="text-sm text-gray-600">${book.rating}</span>
-                            </div>
-                            <span class="px-3 py-1 text-xs rounded-full ${book.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                                ${book.available ? 'Có sẵn' : 'Đã mượn'}
-                            </span>
+            
+            if (currentView === 'grid') {
+                grid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8';
+                grid.innerHTML = paginatedBooks.map(book => `
+                    <div class="book-card bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg">
+                        <div class="h-48 bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center">
+                            <span class="text-white text-4xl">📚</span>
                         </div>
-                        <button onclick="borrowBook(${book.id})" 
-                                class="w-full py-2 px-4 rounded-lg transition-colors ${book.available ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
-                                ${!book.available ? 'disabled' : ''}>
-                            ${book.available ? 'Mượn sách' : 'Không có sẵn'}
-                        </button>
+                        <div class="p-6">
+                            <h4 class="font-semibold text-lg mb-2 text-gray-900">${book.title}</h4>
+                            <p class="text-gray-600 mb-1">Tác giả: ${book.author}</p>
+                            <p class="text-gray-500 text-sm mb-3">Năm xuất bản: ${book.year}</p>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center space-x-1">
+                                    <span class="text-yellow-400">⭐</span>
+                                    <span class="text-sm text-gray-600">${book.rating}</span>
+                                </div>
+                                <span class="px-3 py-1 text-xs rounded-full ${book.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    ${book.available ? 'Có sẵn' : 'Đã mượn'}
+                                </span>
+                            </div>
+                            <button onclick="borrowBook(${book.id})" 
+                                    class="w-full py-2 px-4 rounded-lg transition-colors ${book.available ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
+                                    ${!book.available ? 'disabled' : ''}>
+                                ${book.available ? 'Mượn sách' : 'Không có sẵn'}
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } else {
+                grid.className = 'space-y-4 mb-8';
+                grid.innerHTML = paginatedBooks.map(book => `
+                    <div class="book-card bg-white rounded-xl shadow-md p-6 transition-transform duration-300 hover:shadow-lg">
+                        <div class="flex items-center space-x-6">
+                            <div class="w-20 h-28 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <span class="text-white text-2xl">📚</span>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-semibold text-xl mb-2 text-gray-900">${book.title}</h4>
+                                <p class="text-gray-600 mb-1">Tác giả: ${book.author}</p>
+                                <p class="text-gray-500 text-sm mb-2">Năm xuất bản: ${book.year}</p>
+                                <div class="flex items-center space-x-4 mb-3">
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-yellow-400">⭐</span>
+                                        <span class="text-sm text-gray-600">${book.rating}</span>
+                                    </div>
+                                    <span class="px-3 py-1 text-xs rounded-full ${book.available ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                        ${book.available ? 'Có sẵn' : 'Đã mượn'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button onclick="borrowBook(${book.id})" 
+                                        class="py-2 px-6 rounded-lg transition-colors ${book.available ? 'bg-indigo-600 hover:bg-indigo-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}"
+                                        ${!book.available ? 'disabled' : ''}>
+                                    ${book.available ? 'Mượn sách' : 'Không có sẵn'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            updateResultsCount(booksToShow.length);
+            updatePagination(booksToShow.length);
         }
 
         // Filter books by category
         function filterBooks(category) {
-            const filteredBooks = category === 'all' ? books : books.filter(book => book.category === category);
-            displayBooks(filteredBooks);
+            currentBooks = category === 'all' ? [...books] : books.filter(book => book.category === category);
+            currentPage = 1;
+            displayBooks(currentBooks, currentPage);
             
             // Update active filter button
             document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -223,18 +412,188 @@
             event.target.classList.add('bg-indigo-600', 'text-white');
         }
 
-        // Search books
-        function searchBooks() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const filteredBooks = books.filter(book => 
-                book.title.toLowerCase().includes(searchTerm) || 
-                book.author.toLowerCase().includes(searchTerm)
-            );
-            displayBooks(filteredBooks);
+        // Advanced search
+        function performSearch() {
+            const titleSearch = document.getElementById('searchTitle').value.toLowerCase();
+            const authorSearch = document.getElementById('searchAuthor').value.toLowerCase();
+            const sortBy = document.getElementById('sortBy').value;
             
-            // Scroll to catalog section
-            document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+            let filteredBooks = books.filter(book => {
+                const titleMatch = !titleSearch || book.title.toLowerCase().includes(titleSearch);
+                const authorMatch = !authorSearch || book.author.toLowerCase().includes(authorSearch);
+                return titleMatch && authorMatch;
+            });
+            
+            // Sort books
+            filteredBooks.sort((a, b) => {
+                switch(sortBy) {
+                    case 'author':
+                        return a.author.localeCompare(b.author);
+                    case 'rating':
+                        return b.rating - a.rating;
+                    case 'year':
+                        return b.year - a.year;
+                    default:
+                        return a.title.localeCompare(b.title);
+                }
+            });
+            
+            currentBooks = filteredBooks;
+            currentPage = 1;
+            displayBooks(currentBooks, currentPage);
         }
+
+        // Toggle view
+        function toggleView(view) {
+            currentView = view;
+            document.getElementById('gridView').classList.toggle('bg-indigo-600', view === 'grid');
+            document.getElementById('gridView').classList.toggle('text-white', view === 'grid');
+            document.getElementById('gridView').classList.toggle('bg-gray-200', view !== 'grid');
+            document.getElementById('gridView').classList.toggle('text-gray-600', view !== 'grid');
+            
+            document.getElementById('listView').classList.toggle('bg-indigo-600', view === 'list');
+            document.getElementById('listView').classList.toggle('text-white', view === 'list');
+            document.getElementById('listView').classList.toggle('bg-gray-200', view !== 'list');
+            document.getElementById('listView').classList.toggle('text-gray-600', view !== 'list');
+            
+            displayBooks(currentBooks, currentPage);
+        }
+
+        // Update items per page
+        function updateItemsPerPage() {
+            itemsPerPage = parseInt(document.getElementById('itemsPerPage').value);
+            currentPage = 1;
+            displayBooks(currentBooks, currentPage);
+        }
+
+        // Update results count
+        function updateResultsCount(total) {
+            const start = (currentPage - 1) * itemsPerPage + 1;
+            const end = Math.min(currentPage * itemsPerPage, total);
+            document.getElementById('resultsCount').textContent = `Hiển thị ${start}-${end} trong tổng số ${total} cuốn sách`;
+        }
+
+        // Update pagination
+        function updatePagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            pagination.innerHTML = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.className = `px-4 py-2 rounded-lg transition-colors ${i === currentPage ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-300 hover:bg-gray-50'}`;
+                button.onclick = () => {
+                    currentPage = i;
+                    displayBooks(currentBooks, currentPage);
+                };
+                pagination.appendChild(button);
+            }
+        }
+
+        // Change page
+        function changePage(direction) {
+            const totalPages = Math.ceil(currentBooks.length / itemsPerPage);
+            const newPage = currentPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                displayBooks(currentBooks, currentPage);
+            }
+        }
+         function filterBooks(category) {
+          const bookItems = document.querySelectorAll(".book-item");
+          const filterButtons = document.querySelectorAll(".filter-btn");
+
+          // Reset trạng thái nút
+          filterButtons.forEach((btn) => {
+            btn.classList.remove(
+              "bg-gradient-to-r",
+              "from-blue-500",
+              "to-purple-600",
+              "text-white"
+            );
+            btn.classList.add(
+              "bg-white",
+              "text-gray-700",
+              "border",
+              "border-gray-200"
+            );
+          });
+
+          // Active nút vừa click
+          const activeButton = Array.from(filterButtons).find((btn) =>
+            btn.getAttribute("onclick")?.includes(category)
+          );
+          if (activeButton) {
+            activeButton.classList.remove(
+              "bg-white",
+              "text-gray-700",
+              "border",
+              "border-gray-200"
+            );
+            activeButton.classList.add(
+              "bg-gradient-to-r",
+              "from-blue-500",
+              "to-purple-600",
+              "text-white"
+            );
+          }
+
+          // Lọc sách
+          let visibleCount = 0;
+          bookItems.forEach((item, index) => {
+            if (category === "all" || item.dataset.category === category) {
+              item.style.display = "block";
+              item.style.animationDelay = `${index * 0.1}s`;
+              visibleCount++;
+            } else {
+              item.style.display = "none";
+            }
+          });
+
+          // Cập nhật số lượng
+          document.getElementById("bookCount").textContent = visibleCount;
+        }
+
+        function showBorrowTab(tabName, buttonElement) {
+          // Ẩn tất cả borrow content
+          document.querySelectorAll(".borrow-content").forEach((content) => {
+            content.classList.add("hidden");
+          });
+
+          // Hiển thị tab được chọn
+          document.getElementById(tabName).classList.remove("hidden");
+          document.getElementById(tabName).classList.add("fade-in");
+
+          // Cập nhật active state cho borrow tab buttons
+          document.querySelectorAll(".borrow-tab").forEach((btn) => {
+            btn.classList.remove("bg-green-500", "text-white");
+            btn.classList.add("text-gray-600");
+          });
+
+          // Thêm active state cho button được click
+          if (buttonElement) {
+            buttonElement.classList.remove("text-gray-600");
+            buttonElement.classList.add("bg-green-500", "text-white");
+          }
+        }
+        window.onload = function () {
+          const params = new URLSearchParams(window.location.search);
+          const section = params.get("section") || "quanLySach"; // mặc định mở quản lý sách
+
+          // Tìm đúng nút tương ứng (dùng nav-item, không phải nav-btn)
+          const button = document.querySelector(
+            `.nav-item[onclick*="${section}"]`
+          );
+
+          // Gọi showSection để hiển thị
+          if (button) {
+            showSection(section, button);
+          } else {
+            // fallback nếu không có button (tránh lỗi)
+          }
+        };
 
         // Borrow book function
         function borrowBook(bookId) {
@@ -242,31 +601,13 @@
             if (book && book.available) {
                 alert(`Bạn đã mượn thành công cuốn sách "${book.title}". Vui lòng đến quầy thủ thư để hoàn tất thủ tục.`);
                 book.available = false;
-                displayBooks(books);
+                displayBooks(currentBooks, currentPage);
             }
         }
 
-        // Smooth scrolling for navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
-
-        // Search on Enter key
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                searchBooks();
-            }
-        });
-
-        // Initialize page
-        displayBooks(books);
+        //
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e6cd90e65bb451',t:'MTc1Nzc1NzY4My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-</div>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e6d15c33c1b451',t:'MTc1Nzc1NzgzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+
 {% endblock %}
