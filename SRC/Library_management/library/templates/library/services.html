@@ -60,9 +60,11 @@
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Gia hạn online</li>
                         <li class="flex items-center"><span class="text-green-500 mr-2">✓</span>Đặt trước sách</li>
                     </ul>
-                    <button class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
-                        Tìm hiểu thêm
-                    </button>
+                    <a href="{% url 'library:digital' %}">
+                        <button class="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                            Tìm hiểu thêm
+                        </button>
+                    </a>
                 </div>
 
                 <div class="service-card bg-gradient-to-br from-purple-50 to-purple-100 p-8 rounded-xl transition-transform duration-300 hover:shadow-lg">

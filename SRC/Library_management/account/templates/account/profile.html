@@ -73,7 +73,7 @@
         <nav class="flex mb-8" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                 <li class="inline-flex items-center">
-                    {% comment %} <a href="{%url 'home' %}" class="text-gray-700 hover:text-blue-600"> {% endcomment %}
+                    <a href="{%url 'library:home' %}" class="text-gray-700 hover:text-blue-600">
                         <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
                         </svg>
@@ -144,7 +144,7 @@
                         {% if profile_form.instance.membership_upgrade_date %}
                             <p>
                                 <strong>Ngày nâng cấp gần nhất:</strong> 
-                                {{ profile_form.instance.membership_upgrade_date|date:"H:i, d/m/Y" }}
+                                {{ profile_form.instance.membership_upgrade_date|date:"d/m/Y" }}
                             </p>
                         {% endif %}
 
@@ -152,7 +152,7 @@
                         {% if profile_form.instance.membership_expiry_date %}
                             <p>
                                 <strong>Gói thành viên sẽ hết hạn vào:</strong> 
-                                <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"H:i, d/m/Y" }}</strong>
+                                <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"d/m/Y" }}</strong>
                             </p>
                         {% endif %}
                         <a href="{% url 'library:payment' %}?level={{ profile_form.instance.membership_level }}" class="block w-full py-3 px-6 text-center text-white bg-green-500 rounded-full hover:bg-green-600 transition-colors duration-300">
@@ -199,9 +199,9 @@
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
                                     <select name="gender" id="gender" class="profile-input w-full px-4 py-3 text-gray-900" disabled>
-                                        <option value="Nam" {% if user.userprofile.gender == "Nam" %}selected{% endif %}>Nam</option>
-                                        <option value="Nữ" {% if user.userprofile.gender == "Nữ" %}selected{% endif %}>Nữ</option>
-                                        <option value="Khác" {% if user.userprofile.gender == "Khác" %}selected{% endif %}>Khác</option>
+                                        <option value="male" {% if user.userprofile.gender == "male" %}selected{% endif %}>Nam</option>
+                                        <option value="female" {% if user.userprofile.gender == "female" %}selected{% endif %}>Nữ</option>
+                                        <option value="other" {% if user.userprofile.gender == "other" %}selected{% endif %}>Khác</option>
                                     </select>
                                 </div>
 

@@ -23,4 +23,5 @@ urlpatterns = [
     path("library/", include("library.urls")),
     path("Librarian/", include("Librarian.urls")),
     path('librarian/', include('Librarian.urls', namespace='Librarian')),
+    path('ebook_reader/', include('ebook_reader.urls', namespace='ebook_reader')),
 ]

@@ -7,7 +7,7 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     phone= models.CharField(max_length=15, blank=True)
     occupation = models.CharField(max_length=30, blank=True, null=True)
-    date_of_birth = models.CharField(max_length=25, blank=True, null=True)
+    date_of_birth = models.DateField(max_length=25, blank=True, null=True)
     address = models.TextField(max_length=100,blank=True,null=True)
     
     Gender_Choices = (

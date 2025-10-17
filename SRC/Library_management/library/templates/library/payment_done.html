@@ -202,13 +202,13 @@
                                 <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3">
                                     <span class="text-white text-xs">✓</span>
                                 </span>
-                                <span class="text-gray-700">Kích hoạt: <strong>{{ profile_form.instance.membership_upgrade_date|date:"H:i, d/m/Y" }}</strong></span>
+                                <span class="text-gray-700">Kích hoạt: <strong>{{ profile_form.instance.membership_upgrade_date|date:"d/m/Y" }}</strong></span>
                             </div>
                             <div class="flex items-center">
                                 <span class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center mr-3">
                                     <span class="text-white text-xs">✓</span>
                                 </span>
-                                <span class="text-gray-700">Hết hạn: <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"H:i, d/m/Y" }}</strong></span>
+                                <span class="text-gray-700">Hết hạn: <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"d/m/Y" }}</strong></span>
                             </div>
                             <div class="flex items-center">
                                 <span class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">

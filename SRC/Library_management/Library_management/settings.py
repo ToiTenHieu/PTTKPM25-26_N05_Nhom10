@@ -39,8 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'library',
-    'Librarian'
+    'Librarian',
+    'ebook_reader',
+    'cloudinary',
+    'cloudinary_storage'
 ]
+
+ROOT_URLCONF = 'Library_management.urls'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,23 +81,23 @@ WSGI_APPLICATION = 'Library_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Django',      # Tên database bạn sẽ tạo
-        'USER': 'root',          # User đăng nhập MySQL
-        'PASSWORD': 'hieukk2906',    # Mật khẩu MySQL
-        'HOST': '127.0.0.1',     # Nếu chạy trên máy local
-        'PORT': '3306',          # Port mặc định của MySQL
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'Django',      # Tên database bạn sẽ tạo
+#         'USER': 'root',          # User đăng nhập MySQL
+#         'PASSWORD': 'hieukk2906',    # Mật khẩu MySQL
+#         'HOST': '127.0.0.1',     # Nếu chạy trên máy local
+#         'PORT': '3306',          # Port mặc định của MySQL
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -144,3 +149,20 @@ CACHES = {
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 1800  # giây = 30 phút
 GOOGLE_MAPS_API_KEY = 'AIzaSyCS0waA3JxAA9bB0-rAd-YH_eM2ayhugD0'
+# Cấu hình Cloudinary
+import os
+from dotenv import load_dotenv
+
+load_dotenv() # Tải các biến từ file .env
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
+    'API_SECRET': os.getenv('API_SECRET'),
+}
+import cloudinary
+cloudinary.config( 
+  cloud_name = os.getenv('CLOUD_NAME'),
+  api_key = os.getenv('API_KEY'),
+  api_secret = os.getenv('API_SECRET')
+)

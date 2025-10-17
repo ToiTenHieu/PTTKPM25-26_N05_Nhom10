@@ -92,29 +92,33 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-2xl">📖</span>
+                <a href="{% url 'library:services'%}">
+                    <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">📖</span>
+                        </div>
+                        <h4 class="text-xl font-semibold mb-3">Mượn sách</h4>
+                        <p class="text-gray-600">Mượn sách tại chỗ và về nhà với thời hạn linh hoạt</p>
                     </div>
-                    <h4 class="text-xl font-semibold mb-3">Mượn sách</h4>
-                    <p class="text-gray-600">Mượn sách tại chỗ và về nhà với thời hạn linh hoạt</p>
-                </div>
-
-                <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-2xl">💻</span>
+                </a>
+                <a href="{% url 'library:services'%}">
+                    <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">💻</span>
+                        </div>
+                        <h4 class="text-xl font-semibold mb-3">Thư viện số</h4>
+                        <p class="text-gray-600">Truy cập hàng nghìn tài liệu số và e-book miễn phí</p>
                     </div>
-                    <h4 class="text-xl font-semibold mb-3">Thư viện số</h4>
-                    <p class="text-gray-600">Truy cập hàng nghìn tài liệu số và e-book miễn phí</p>
-                </div>
-
-                <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
-                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="text-2xl">🎓</span>
+                </a>
+                <a href="{% url 'library:services'%}">
+                    <div class="text-center p-8 rounded-xl bg-gray-50 hover:shadow-lg transition-shadow">
+                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl">🎓</span>
+                        </div>
+                        <h4 class="text-xl font-semibold mb-3">Hỗ trợ nghiên cứu</h4>
+                        <p class="text-gray-600">Tư vấn và hướng dẫn nghiên cứu từ các chuyên gia</p>
                     </div>
-                    <h4 class="text-xl font-semibold mb-3">Hỗ trợ nghiên cứu</h4>
-                    <p class="text-gray-600">Tư vấn và hướng dẫn nghiên cứu từ các chuyên gia</p>
-                </div>
+                </a>
             </div>
         </div>
     </section>
@@ -162,14 +166,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-gray-300 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; Hẹ</p>
-        </div>
-    </footer>
-
     <script>
         // Sample book data
         const books = [

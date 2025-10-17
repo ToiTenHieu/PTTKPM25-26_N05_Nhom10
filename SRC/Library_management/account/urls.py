@@ -8,5 +8,6 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('change-password/', views.change_password, name='change_password'),
     path('regis_by_fb/', views.regis_by_fb, name='regis_by_fb'),
-    path('regis_by_gg/', views.regis_by_gg, name='regis_by_gg'),    
+    path('regis_by_gg/', views.regis_by_gg, name='regis_by_gg'),
+       
 ]

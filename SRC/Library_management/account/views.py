@@ -84,37 +84,38 @@ def login_view(request):
     return render(request, 'account/login.html', {'form': form})
 
 
-def logout_view(request): # Đổi tên view
-    auth_logout(request) # Dùng auth_logout đã import
+def logout_view(request): 
+    auth_logout(request) 
     messages.info(request, "Bạn đã đăng xuất.")
-    return redirect("login")
+    return redirect("account:login")
 
 @login_required
 @transaction.atomic
 def profile(request):
-    # SỬA 8: Phải gọi trên Model, không phải Form
-    profile, created = UserProfile.objects.get_or_create(user=request.user)
-    
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
     if request.method == "POST":
-        changeprofile_form = ChangeUserProfileForm(request.POST, request.FILES, instance=profile)
-        user_form = UserForm(request.POST, instance=request.user)
-        if changeprofile_form.is_valid() and user_form.is_valid():
-            changeprofile_form.save()
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = ChangeUserProfileForm(request.POST, request.FILES, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-            messages.success(request, "Cập nhật thông tin thành công")
-            return redirect('profile')
+            profile_form.save()
+            messages.success(request, "Cập nhật thông tin thành công!")
+            return redirect("account:profile") 
         else:
-            messages.error(request, "Vui lòng kiểm tra lại thông tin")
+            messages.error(request, "Có lỗi xảy ra, vui lòng kiểm tra lại các trường thông tin.")
     else:
-        changeprofile_form = ChangeUserProfileForm(instance=profile)
-        user_form = UserForm(instance=request.user)
-        
+        user_form = UserForm(instance=user)
+        profile_form = ChangeUserProfileForm(instance=profile)
+
     context = {
-        'changeprofile_form': changeprofile_form,
-        'user_form': user_form,
-        'profile': profile,
+        "user_form": user_form,
+        "profile_form": profile_form,
+        "user": user,
     }
-    return render(request, 'account/profile.html', context)
+    return render(request, "account/profile.html", context)
 
 @login_required
 def change_password(request):
@@ -124,15 +125,12 @@ def change_password(request):
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Mật khẩu đã được thay đổi thành công.')
-            return redirect('home')
+            return redirect('library:home')
         else:
             messages.error(request, 'Vui lòng kiểm tra lại thông tin.')
     else:
         form = PasswordChangeForm(user=request.user)
-    return render(request, 'account/change_password.html', {'form': form})
-
-def home(request):
-    return render(request, 'account/home.html')
+    return render(request, 'account/change-password.html', {'form': form})
 def regis_by_fb(request):
     return render(request, 'account/regis_by_fb.html')
 def regis_by_gg(request):
