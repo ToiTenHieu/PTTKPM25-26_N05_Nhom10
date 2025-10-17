@@ -88,12 +88,13 @@ def librarian_dashboard(request):
 
     # --- Phân loại ---
     records_borrowed = records_all.filter(status__in=['borrowed', 'overdue'])
+    records_ovedue = records_all.filter(status= 'overdue')
     records_history = records_all.filter(status='returned')
 
     # --- Tổng số bản ghi ---
     total_borrowed = records_borrowed.count()
     total_history = records_history.count()
-
+    total_books = Book.objects.count()
     # ======================================================
     # 👉 Truyền dữ liệu sang template
     # ======================================================
@@ -108,6 +109,8 @@ def librarian_dashboard(request):
         'records_history': records_history,
         'total_borrowed': total_borrowed,
         'total_history': total_history,
+        'total_books': total_books,
+        'records_ovedue':records_ovedue,
     }
 
     return render(request, 'managebook.html', context)
@@ -342,3 +345,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from .models import BorrowRecord
+def get_book_count(request):
+    count = Book.objects.count()
+    return JsonResponse({"count": count})

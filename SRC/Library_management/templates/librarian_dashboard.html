@@ -203,63 +203,82 @@
   </head>
   <body class="min-h-screen gradient-bg">
     <!-- Header với hiệu ứng glass -->
-    <header class="glass-effect border-b border-white/20">
-      <div class="container mx-auto px-6 py-6">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-4">
-            <div class="relative">
-              <div
-                class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center pulse-glow"
-              >
-                <svg
-                  class="w-8 h-8 text-white icon-bounce"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-            </div>
-            <div>
-              <h1 class="text-3xl font-bold text-white text-shadow">
-                Thư Viện Số
-              </h1>
-              <p class="text-white/80 font-medium">Hệ thống quản lý hiện đại</p>
-            </div>
+  <header class="glass-effect border-b border-white/20">
+  <div class="container mx-auto px-6 py-6">
+    <div class="flex items-center justify-between">
+      <!-- Logo + tên -->
+      <div class="flex items-center space-x-4">
+        <div class="relative">
+          <div
+            class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center pulse-glow"
+          >
+            <svg
+              class="w-8 h-8 text-white icon-bounce"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          <div class="text-right">
-            <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-<p class="text-white/90 font-semibold">
-  👋 Xin chào, 
-  <span class="text-yellow-300">{{ request.user.name|default:request.user.username }}</span>
-</p>
-              <p id="real-time" class="text-xs text-gray-500"></p>
-              <script>
-                function updateTime() {
-                  const now = new Date();
-                  const formatted = now.toLocaleString("vi-VN", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  });
-                  document.getElementById("real-time").textContent = formatted;
-                }
-                updateTime();
-                setInterval(updateTime, 1000);
-              </script>
+        </div>
+        <div>
+          <h1 class="text-3xl font-bold text-white text-shadow">Thư Viện Số</h1>
+          <p class="text-white/80 font-medium">Hệ thống quản lý hiện đại</p>
+        </div>
+      </div>
+
+      <!-- Thông tin người dùng -->
+      <div class="text-right">
+        <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+          <p class="text-white/90 font-semibold">
+            👋 Xin chào,
+            <span class="text-yellow-300">
+              {{ request.user.name|default:request.user.username }}
+            </span>
+          </p>
+
+          <p id="real-time" class="text-xs text-gray-400 mt-1"></p>
+
+          <script>
+            function updateTime() {
+              const now = new Date();
+              const formatted = now.toLocaleString("vi-VN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              });
+              document.getElementById("real-time").textContent = formatted;
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
+          </script>
+
+          <!-- Hai nút nằm cạnh nhau -->
+          <div class="flex justify-end gap-3 mt-3">
+            <button
+              class="bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-all duration-300 text-sm font-medium"
+            >
+              👤 Hồ Sơ
+            </button>
+
+            <form method="POST" action="{% url 'account:logout' %}">
+              {% csrf_token %}
               <button
-                class="mt-2 bg-white/20 text-white px-4 py-2 rounded-lg hover:bg-white/30 transition-all duration-300 text-sm font-medium"
+                type="submit"
+                class="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-2 rounded-lg shadow-md hover:from-red-600 hover:to-red-800 hover:shadow-lg transform hover:scale-105 transition-all duration-300 text-sm font-medium"
               >
-                👤 Hồ Sơ
+                🚪 Đăng Xuất
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
-    </header>
+    </div>
+  </div>
+</header>
 
     <div class="container mx-auto px-6 py-8">
       <!-- Navigation Menu với hiệu ứng đẹp -->
@@ -547,6 +566,31 @@
           // Cập nhật số lượng
           document.getElementById("bookCount").textContent = visibleCount;
         }
+        async function loadBookCount() {
+  try {
+    const response = await fetch("/librarian/api/book-count/");
+    const data = await response.json();
+    document.getElementById("bookCount").textContent = data.count;
+  } catch (error) {
+    console.error("Lỗi khi tải tổng số sách:", error);
+    document.getElementById("bookCount").textContent = "⚠️ Lỗi";
+  }
+}
+window.onload = function () {
+  const params = new URLSearchParams(window.location.search);
+  const section = params.get("section") || "quanLySach";
+  const button = document.querySelector(`.nav-item[onclick*="${section}"]`);
+  
+  if (button) {
+    showSection(section, button);
+  } else {
+    showSection("quanLySach", document.querySelector(".nav-item"));
+  }
+
+  // 👉 Gọi API đếm tổng sách
+  loadBookCount();
+};
+
 
         function showBorrowTab(tabName, buttonElement) {
           // Ẩn tất cả borrow content
