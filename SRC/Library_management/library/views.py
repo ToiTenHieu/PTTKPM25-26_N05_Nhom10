@@ -315,5 +315,3 @@ from .models import Review # Cần import Model Review
 
 def about(request):
     return render(request, 'library/about.html')
-def borrow_book(request):
-    return render(request, 'library/borrow_book.html')

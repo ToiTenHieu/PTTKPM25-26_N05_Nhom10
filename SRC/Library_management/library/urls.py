@@ -9,13 +9,14 @@ urlpatterns = [
     path('services/', views.services, name='services'),
     path('contact/', views.contact, name='contact'),
     path('membership/', views.membership, name='membership'),
-    path('', views.home, name='home'),  # Đường dẫn gốc dẫn đến trang chủ
+    path('', views.home, name='home'),
     path('payment/', views.payment, name='payment'),
     path('process_payment/', views.process_payment, name='process_payment'),
     path('payment_done/', views.payment_done, name='payment_done'),
     path('digital/', views.digital, name='digital'),
     path('about/', views.about, name='about'),
-    path('borrow_book/', views.borrow_book, name='borrow_book'),
     path('book-detail/<int:book_id>/', views.book_detail_view, name='book_detail_view'),
+    path('borrow/', views.borrow_book, name='borrow_book'),  # ✅ Thêm dòng này
+
     
 ]
