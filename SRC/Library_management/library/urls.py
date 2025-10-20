@@ -17,6 +17,6 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('book-detail/<int:book_id>/', views.book_detail_view, name='book_detail_view'),
     path('borrow/', views.borrow_book, name='borrow_book'),  # ✅ Thêm dòng này
-
+    path('borrowed_books/', views.borrowed_books, name='borrowed_books'),
     
 ]

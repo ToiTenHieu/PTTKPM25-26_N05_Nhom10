@@ -315,3 +315,13 @@ from .models import Review # Cần import Model Review
 
 def about(request):
     return render(request, 'library/about.html')
+@login_required
+def borrowed_books(request):
+    # Lấy user hiện tại
+    user_profile = request.user.userprofile
+    borrowed_books = BorrowRecord.objects.filter(user=user_profile).select_related('book')
+
+    context = {
+        'borrowed_books': borrowed_books,
+    }
+    return render(request, 'library/borrowed_books.html', context)

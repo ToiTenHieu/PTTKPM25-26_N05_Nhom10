@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from account.models import UserProfile
+from datetime import date
 # Create your models here.
 class Book(models.Model):
     STATUS_CHOICES = [
