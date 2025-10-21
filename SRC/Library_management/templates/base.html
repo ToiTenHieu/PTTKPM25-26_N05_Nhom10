@@ -26,7 +26,7 @@
                     <a href="{% url 'library:services' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Dịch vụ</a>
                     <a href="{% url 'library:contact' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Liên hệ</a>
                     <a href="{% url 'library:membership' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Gói thành viên</a> 
-                    <a href="{% url 'library:borrowed_books' %}" class="text-gray-700 hover:text-indigo-600 font-medium">Sách đã mượn</a>
+                    
                 </nav>
 
                 <div class="flex items-center space-x-4">
@@ -64,6 +64,7 @@
                     <a href="{% url 'account:profile' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Thông tin cá nhân</a>
                     {% comment %} <a href="{% url 'borrowed_books' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Sách của tôi</a> {% endcomment %}
                     <a href="{% url 'account:change_password' %}"class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Đổi mật khẩu</a>
+                    <a href="{% url 'library:borrowed_books' %}" class="block px-4 py-2 text-sm text-gray-700 rounded hover:bg-gray-100">Sách đã mượn</a>
 
             <form method="POST" action="{% url 'account:logout' %}">
                 {% csrf_token %}
@@ -107,9 +108,7 @@
         {% block content %}
         {% endblock %}
     </main>
-    <footer class="bg-gray-800 text-gray-300 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2025 Thư Viện Trung Tâm. Tất cả quyền được bảo lưu.</p>
-        </div>
-    </footer>
+  <footer class="bg-gray-900 text-white text-center py-4 text-sm fixed bottom-0 left-0 w-full">
+    &copy; 2025 Thư Viện Trung Tâm. Tất cả quyền được bảo lưu.
+  </footer>
 </html>

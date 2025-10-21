@@ -117,18 +117,23 @@
                         </div>
                         
                         <!-- Stats -->
-                        <div class="mt-6 pt-6 border-t border-gray-200">
-                            <div class="grid grid-cols-2 gap-4 text-center">
-                                <div>
-                                    <div class="text-2xl font-bold text-blue-600">32</div>
-                                    <div class="text-sm text-gray-600">Sách đã mượn</div>
-                                </div>
-                                <div>
-                                    <div class="text-2xl font-bold text-green-600">3</div>
-                                    <div class="text-sm text-gray-600">Đang mượn</div>
-                                </div>
-                            </div>
-                        </div>
+<div class="mt-6 pt-6 border-t border-gray-200">
+    <div class="grid grid-cols-2 gap-4 text-center">
+        <div>
+            <div class="text-2xl font-bold text-blue-600">
+                {{ total_borrowed }}
+            </div>
+            <div class="text-sm text-gray-600">Sách đã mượn</div>
+        </div>
+        <div>
+            <div class="text-2xl font-bold text-green-600">
+                {{ currently_borrowed }}
+            </div>
+            <div class="text-sm text-gray-600">Đang mượn</div>
+        </div>
+    </div>
+</div>
+
                         <p><strong>Ngày tham gia:</strong> {{ user.date_joined|date:"d/m/Y" }}</p>
                     </div>
                     <div class="bg-white p-6 rounded-lg shadow-md max-w-sm mx-auto">

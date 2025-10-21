@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Sum
 from django.contrib.auth.models import User
 from .membership_states import BasicState, StandardState, PremiumState
 # Create your models here.
@@ -68,5 +69,21 @@ class UserProfile(models.Model):
         return self.name or self.user.username
     def get_full_name(self):
         return self.name or self.user.username or self.user.get_full_name()
-        
+    
+    
+    def total_renew_used(self):
+        """Tính tổng số lần gia hạn mà user này đã dùng (chưa trả sách)."""
+        from django.apps import apps
+        from django.db.models import Sum
+
+        # Lấy model BorrowRecord mà không bị lỗi import vòng tròn
+        BorrowRecord = apps.get_model('Librarian', 'BorrowRecord')
+
+        total = BorrowRecord.objects.filter(
+            user=self,
+            status__in=['borrowed', 'overdue']
+        ).aggregate(total=Sum('renew_count'))['total'] or 0
+
+        return total
+
         

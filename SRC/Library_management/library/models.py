@@ -6,6 +6,7 @@ from django.db import models
 from django.db import models
 from django.contrib.auth.models import User
 from Librarian.models import Book # Giả định Model Book nằm trong cùng file
+from Librarian.models import BorrowRecord # Giả định Model Book nằm trong cùng file
 
 # library/models.py (Thêm vào cuối file)
 from django.db.models import UniqueConstraint # Thêm import này

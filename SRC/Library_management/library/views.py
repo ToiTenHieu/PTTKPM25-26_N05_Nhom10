@@ -325,3 +325,48 @@ def borrowed_books(request):
         'borrowed_books': borrowed_books,
     }
     return render(request, 'library/borrowed_books.html', context)
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from datetime import date
+
+def renew_book(request, record_id):
+    record = get_object_or_404(BorrowRecord, id=record_id, user=request.user.userprofile)
+    if record.extend_due_date():
+        messages.success(request, "📅 Gia hạn thành công thêm 7 ngày!")
+    else:
+        messages.error(request, "⚠️ Bạn đã hết lượt gia hạn miễn phí hoặc không đủ điều kiện.")
+    return redirect('library:borrowed_books')
+
+def extend_book(request, record_id):
+    record = get_object_or_404(BorrowRecord, pk=record_id)
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    # ❌ Nếu sách không ở trạng thái có thể gia hạn
+    if record.status not in ['borrowed', 'overdue']:
+        messages.error(request, "Sách này không thể gia hạn.")
+        return redirect('library:borrowed_books')
+
+    # ✅ Lấy giới hạn lượt gia hạn theo gói
+    max_extend = user_profile.free_extend  
+    total_renewed = user_profile.total_renew_used()
+
+    if total_renewed >= max_extend:
+        messages.error(
+            request,
+            f"⚠️ Bạn đã đạt giới hạn {max_extend} lần gia hạn cho gói {user_profile.membership_level.upper()}."
+        )
+        return redirect('library:borrowed_books')
+
+    # ✅ Nếu chưa vượt giới hạn thì cho phép gọi hàm gia hạn
+    if record.extend_due_date():
+        messages.success(
+            request,
+            f"📘 Gia hạn thành công! Hạn mới: {record.due_date.strftime('%d/%m/%Y')}"
+        )
+    else:
+        messages.error(request, "⚠️ Bạn đã hết lượt gia hạn miễn phí cho gói hiện tại.")
+
+    return redirect('library:borrowed_books')

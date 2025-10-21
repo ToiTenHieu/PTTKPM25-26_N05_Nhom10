@@ -65,7 +65,7 @@ class PremiumState(MembershipState):
 
     @property
     def free_extend(self):
-        return 5
+        return 5000
 
     def has_priority(self):
         return True

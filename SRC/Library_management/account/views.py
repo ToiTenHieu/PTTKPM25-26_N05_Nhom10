@@ -84,11 +84,21 @@ def logout_view(request):
     return redirect("account:login")
 
 
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .models import UserProfile
+from library.models import BorrowRecord  # import model BorrowRecord nếu ở app khác
+from .forms import UserForm, ChangeUserProfileForm
 @login_required
 @transaction.atomic
+
 def profile(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
+
+    # 🟢 Lấy thống kê mượn sách của user
+    total_borrowed = BorrowRecord.objects.filter(user=profile).count()
+    currently_borrowed = BorrowRecord.objects.filter(user=profile, status='borrowed').count()
 
     if request.method == "POST":
         user_form = UserForm(request.POST, instance=user)
@@ -109,8 +119,11 @@ def profile(request):
         "user_form": user_form,
         "profile_form": profile_form,
         "user": user,
+        "total_borrowed": total_borrowed,        # 🟢 thêm vào context
+        "currently_borrowed": currently_borrowed # 🟢 thêm vào context
     }
     return render(request, "account/profile.html", context)
+
 
 
 @login_required
