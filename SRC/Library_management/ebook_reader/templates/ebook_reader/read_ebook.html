@@ -143,7 +143,7 @@
             if (!pdfDoc) return;
             pdfDoc.getPage(pageNum).then(page => {
                 const container = canvas.parentElement;
-                const containerWidth = container.clientWidth - 40; // padding
+                const containerWidth = container.clientWidth - 1100; // padding
                 const viewport = page.getViewport({ scale: 1 });
                 scale = containerWidth / viewport.width;
                 queueRenderPage(pageNum);

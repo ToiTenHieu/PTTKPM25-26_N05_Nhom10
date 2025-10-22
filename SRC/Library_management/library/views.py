@@ -370,3 +370,49 @@ def extend_book(request, record_id):
         messages.error(request, "⚠️ Bạn đã hết lượt gia hạn miễn phí cho gói hiện tại.")
 
     return redirect('library:borrowed_books')
+from django.shortcuts import render
+from .models import Book
+from django.db.models import Q
+
+def search(request):
+    query = request.GET.get('q', '')
+    results = []
+
+    if query:
+        # Tìm kiếm theo tiêu đề, tác giả hoặc mô tả
+        results = Book.objects.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(category__icontains=query) 
+        )
+
+    context = {
+        'query': query,
+        'results': results
+    }
+    return render(request, 'library/search.html', context)
+from django.http import JsonResponse
+from django.db.models import Q
+from .models import Book
+
+def autocomplete(request):
+    query = request.GET.get('q', '')
+    suggestions = []
+
+    if query:
+        # Tìm kiếm trong tiêu đề, tác giả, thể loại
+        books = Book.objects.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(category__icontains=query)
+        ).distinct()[:10]
+
+        for book in books:
+            suggestions.append({
+                "title": book.title,
+                "author": book.author,
+                "category": book.category,
+            })
+
+    return JsonResponse({"results": suggestions})
+

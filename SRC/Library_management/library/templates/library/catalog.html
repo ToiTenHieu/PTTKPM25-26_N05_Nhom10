@@ -17,31 +17,77 @@
 
     <section class="hero-gradient text-white py-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <h2 class="text-4xl md:text-5xl font-bold mb-4">Danh Mục Sách</h2>
-                <p class="text-xl opacity-90 max-w-2xl mx-auto">Khám phá bộ sưu tập phong phú với hơn 50,000 đầu sách từ mọi lĩnh vực</p>
-            </div>
+          <div class="text-center mb-8">
+              <h2 class="text-4xl md:text-5xl font-bold mb-4">Danh Mục Sách</h2>
+              <p class="text-xl opacity-90 max-w-2xl mx-auto">Khám phá bộ sưu tập phong phú với hơn 50,000 đầu sách từ mọi lĩnh vực</p>
+          </div>
             
             <!-- Advanced Search -->
-            <div class="max-w-4xl mx-auto">
-                <div class="bg-white rounded-xl p-6 shadow-lg">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <input type="text" id="searchTitle" placeholder="Tên sách..." 
-                               class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700">
-                        <input type="text" id="searchAuthor" placeholder="Tác giả..." 
-                               class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700">
-                        <select id="sortBy" class="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-700">
-                            <option value="title">Sắp xếp theo tên</option>
-                            <option value="author">Sắp xếp theo tác giả</option>
-                            <option value="rating">Sắp xếp theo đánh giá</option>
-                            <option value="year">Sắp xếp theo năm xuất bản</option>
-                        </select>
-                    </div>
-                    <button onclick="performSearch()" class="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-                        Tìm kiếm nâng cao
-                    </button>
-                </div>
-            </div>
+<div class="max-w-4xl mx-auto relative">
+  <form action="{% url 'library:search' %}" method="GET" class="flex bg-white rounded-lg p-2 shadow-lg">
+    <input 
+      type="text" 
+      name="q"
+      id="searchInput"
+      placeholder="Tìm kiếm sách, tác giả, chủ đề..." 
+      class="flex-1 px-4 py-3 text-gray-700 focus:outline-none rounded-l-lg"
+      autocomplete="off"
+      required
+    >
+    <button 
+      type="submit"
+      class="bg-indigo-600 text-white px-8 py-3 rounded-r-lg hover:bg-indigo-700 transition-colors"
+    >
+      Tìm kiếm
+    </button>
+  </form>
+
+  <!-- Hộp gợi ý -->
+  <ul id="suggestionBox" class="absolute left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 hidden z-50 max-h-60 overflow-y-auto shadow-lg"></ul>
+</div>
+
+<script>
+const searchInput = document.getElementById("searchInput");
+const suggestionBox = document.getElementById("suggestionBox");
+
+searchInput.addEventListener("input", async () => {
+  const query = searchInput.value.trim();
+  if (!query) {
+    suggestionBox.classList.add("hidden");
+    return;
+  }
+
+  const response = await fetch(`/library/autocomplete/?q=${encodeURIComponent(query)}`);
+  const data = await response.json();
+
+  // Xóa nội dung cũ
+  suggestionBox.innerHTML = "";
+
+  if (data.results.length > 0) {
+    data.results.forEach(item => {
+      const li = document.createElement("li");
+      li.className = "px-4 py-2 hover:bg-indigo-50 cursor-pointer text-gray-700";
+      li.textContent = `${item.title || item.author || item.category}`;
+      li.addEventListener("click", () => {
+        searchInput.value = li.textContent;
+        suggestionBox.classList.add("hidden");
+      });
+      suggestionBox.appendChild(li);
+    });
+    suggestionBox.classList.remove("hidden");
+  } else {
+    suggestionBox.classList.add("hidden");
+  }
+});
+
+// Ẩn gợi ý khi click ra ngoài
+document.addEventListener("click", (e) => {
+  if (!suggestionBox.contains(e.target) && e.target !== searchInput) {
+    suggestionBox.classList.add("hidden");
+  }
+});
+</script>
+
         </div>
     </section>
 

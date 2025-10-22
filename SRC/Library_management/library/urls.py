@@ -19,5 +19,8 @@ urlpatterns = [
     path('borrow/', views.borrow_book, name='borrow_book'),  # ✅ Thêm dòng này
     path('borrowed_books/', views.borrowed_books, name='borrowed_books'),
     path('renew/<int:record_id>/', views.renew_book, name='renew_book'),
-     path('extend_book/<int:record_id>/', views.extend_book, name='extend_book'),
+    path('extend_book/<int:record_id>/', views.extend_book, name='extend_book'),
+    path('search/', views.search, name='search'),
+    path('autocomplete/', views.autocomplete, name='autocomplete'),  # 👈 Thêm dòng này
+
 ]
