@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from Librarian.models import Book, BorrowRecord
 from account.models import UserProfile
+from django.db.models import Avg, F
 def catalog(request):
     # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
     if not request.user.is_authenticated:
@@ -42,9 +43,12 @@ def home(request):
         return redirect("account:logout")
 
     # Lấy danh sách sách + tính điểm trung bình
+
     books_with_rating = Book.objects.annotate(
-        avg_rating=Avg('reviews__rating')  # ✅ dùng đúng related_name của Review
-    ).order_by("-book_id")
+        avg_rating=Avg('reviews__rating')
+    ).order_by(
+        F('avg_rating').desc(nulls_last=True)
+    )
 
     # Phân trang
     paginator = Paginator(books_with_rating, 8)
@@ -180,6 +184,12 @@ from datetime import timedelta
 from datetime import datetime
 
 
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from datetime import datetime
+from .models import Book, BorrowRecord
+from account.models import UserProfile
+
 @login_required
 def borrow_book(request):
     if request.method == "POST":
@@ -197,7 +207,20 @@ def borrow_book(request):
             # 🧭 Lấy thông tin gói thành viên
             membership_state = user_profile.get_membership_state()
 
-            # 🧮 1️⃣ Đếm số sách người này đang mượn (chưa trả)
+            # 🔒 1️⃣ Kiểm tra nếu người này đã mượn cuốn này mà chưa trả
+            already_borrowed = BorrowRecord.objects.filter(
+                user=user_profile,
+                book=book,
+                status__in=["borrowed", "overdue"]
+            ).exists()
+
+            if already_borrowed:
+                return JsonResponse({
+                    "success": False,
+                    "message": f"❗Bạn đã mượn cuốn '{book.title}' rồi. Hãy trả trước khi mượn lại."
+                })
+
+            # 🧮 2️⃣ Đếm số sách người này đang mượn (chưa trả)
             current_borrowed = BorrowRecord.objects.filter(
                 user=user_profile,
                 status__in=["borrowed", "overdue"]
@@ -211,7 +234,7 @@ def borrow_book(request):
                                f"Hiện bạn đang mượn {current_borrowed} cuốn."
                 })
 
-            # 🕒 2️⃣ Kiểm tra số ngày không vượt quá giới hạn
+            # 🕒 3️⃣ Kiểm tra số ngày mượn hợp lệ
             borrow_dt = datetime.strptime(borrow_date, "%Y-%m-%d").date()
             return_dt = datetime.strptime(return_date, "%Y-%m-%d").date()
             delta_days = (return_dt - borrow_dt).days
@@ -222,14 +245,14 @@ def borrow_book(request):
                     "message": f"Gói {membership_state.name} chỉ được mượn tối đa {membership_state.max_days} ngày."
                 })
 
-            # 📚 3️⃣ Kiểm tra tồn kho
+            # 📚 4️⃣ Kiểm tra tồn kho
             if book.quantity < quantity:
                 return JsonResponse({
                     "success": False,
                     "message": "Không đủ số lượng sách trong kho."
                 })
 
-            # 💾 4️⃣ Ghi vào bảng mượn
+            # 💾 5️⃣ Ghi vào bảng mượn
             BorrowRecord.objects.create(
                 user=user_profile,
                 book=book,
@@ -238,7 +261,7 @@ def borrow_book(request):
                 status="borrowed"
             )
 
-            # 🔄 5️⃣ Cập nhật số lượng sách
+            # 🔄 6️⃣ Cập nhật số lượng sách
             book.quantity -= quantity
             if book.quantity <= 0:
                 book.status = "unavailable"
@@ -246,7 +269,7 @@ def borrow_book(request):
 
             return JsonResponse({
                 "success": True,
-                "message": "Mượn sách thành công!"
+                "message": "✅ Mượn sách thành công!"
             })
 
         except Exception as e:
@@ -259,6 +282,7 @@ def borrow_book(request):
         "success": False,
         "message": "Phương thức không hợp lệ."
     })
+
 from django.shortcuts import render, get_object_or_404
 # library/views.py
 
@@ -279,6 +303,7 @@ def book_detail_view(request, book_id):
             
         rating = request.POST.get('rating')
         comment = request.POST.get('comment')
+        
         
         # Tạo hoặc Cập nhật đánh giá
         Review.objects.update_or_create(
