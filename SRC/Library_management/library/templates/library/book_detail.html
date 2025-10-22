@@ -1,68 +1,82 @@
 {% extends "base.html" %}  {# Thay thế bằng base template của bạn #}
 
 {% block content %}
-<section class="py-12 bg-gray-50 min-h-screen">
-    <div class="container mx-auto px-4 max-w-4xl">
-        <a href="{% url 'librarian:managebook' %}" class="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-semibold transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Quay lại Danh sách sách
-        </a>
+  <section class="py-16 bg-gradient-to-br from-gray-50 via-gray-100 to-white min-h-screen">
+    <div class="container mx-auto px-6 max-w-5xl">
+      <a href="{% url 'librarian:managebook' %}" 
+        class="group inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-8 font-semibold transition-all duration-300">
+        <svg class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-300" 
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Quay lại Danh sách sách
+      </a>
+      <div class="bg-white/80 backdrop-blur-md p-10 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.05)] border border-gray-100 transition hover:shadow-[0_8px_40px_rgba(0,0,0,0.08)] duration-300">
+        <header class="mb-8 pb-6 border-b border-gray-200 flex items-start gap-6">
+          <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl 
+            flex items-center justify-center text-4xl shadow-lg text-white">
+            📖
+          </div>
+          <div>
+            <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight leading-snug">
+              {{ book.title }}
+            </h1>
+            <p class="text-lg text-gray-600 mt-2 italic">Tác giả: 
+              <span class="font-semibold text-indigo-700">{{ book.author }}</span>
+            </p>
+          </div>
+        </header>
+        <div class="grid md:grid-cols-2 gap-8 mt-8">
+  <div class="space-y-4 text-gray-700">
+    <h2 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-100 pb-2 mb-4">
+      📘 Thông tin cơ bản
+    </h2>
+    <div class="space-y-3">
+      <div class="flex justify-between border-b pb-2">
+        <span class="font-medium flex items-center space-x-2">🏷️ Thể loại:</span>
+        <span class="text-gray-900 font-semibold">{{ book.category }}</span>
+      </div>
+      <div class="flex justify-between border-b pb-2">
+        <span class="font-medium flex items-center space-x-2">📅 Năm XB:</span>
+        <span class="font-semibold text-gray-900">{{ book.year }}</span>
+      </div>
+      <div class="flex justify-between border-b pb-2">
+        <span class="font-medium flex items-center space-x-2">📦 Tồn kho:</span>
+        <span class="font-extrabold text-2xl 
+              {% if book.quantity > 0 %}text-green-600{% else %}text-red-600{% endif %}">
+          {{ book.quantity }} cuốn
+        </span>
+      </div>
+      <div class="flex justify-between border-b pb-2">
+        <span class="font-medium flex items-center space-x-2">🔗 Mã sách:</span>
+        <span class="font-semibold text-gray-800">{{ book.book_id }}</span>
+      </div>
+    </div>
+  </div>
 
-        <div class="bg-white p-8 rounded-2xl shadow-2xl border-t-4 border-indigo-500">
-            <header class="mb-8 pb-4 border-b border-gray-100 flex items-start space-x-6">
-                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg">
-                    <span class="text-white text-3xl">📚</span>
-                </div>
-                <div>
-                    <h1 class="text-3xl font-extrabold text-gray-900">{{ book.title }}</h1>
-                    <p class="text-xl text-gray-600 mt-1">
-                        <span class="font-semibold">{{ book.author }}</span> (Tác giả)
-                    </p>
-                </div>
-            </header>
+  <div class="bg-gray-50/60 p-5 rounded-xl border border-gray-100 shadow-inner">
+    <h2 class="text-2xl font-bold text-indigo-700 border-b-2 border-indigo-100 pb-2 mb-3">
+      📝 Mô tả
+    </h2>
+    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">
+      {{ book.description|default:"Sách này hiện chưa có mô tả chi tiết." }}
+    </p>
+  </div>
+</div>
 
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="space-y-4 text-gray-700">
-                    <h2 class="text-2xl font-bold text-indigo-600 border-b pb-2 mb-4">Thông tin cơ bản</h2>
-                    
-                    <p class="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span class="font-medium flex items-center space-x-2">🏷️ Thể loại:</span>
-                        <span class="font-semibold text-gray-800">{{ book.category }}</span>
-                    </p>
-                    
-                    <p class="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span class="font-medium flex items-center space-x-2">📅 Năm XB:</span>
-                        <span class="font-semibold text-gray-800">{{ book.year }}</span>
-                    </p>
-                    
-                    <p class="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span class="font-medium flex items-center space-x-2">📦 Số lượng tồn:</span>
-                        <span class="font-extrabold text-2xl {% if book.quantity > 0 %}text-green-600{% else %}text-red-600{% endif %}">{{ book.quantity }} cuốn</span>
-                    </p>
-                    
-                    <p class="flex justify-between items-center border-b border-gray-100 pb-2">
-                        <span class="font-medium flex items-center space-x-2">🔗 ID Sách:</span>
-                        <span class="font-semibold text-gray-800">{{ book.book_id }}</span>
-                    </p>
-                </div>
+<div class="mt-10 text-right">
+  <button
+    onclick="openBorrowModal('{{ book.book_id }}', '{{ book.title }}', '{{ book.author }}')"
+    class="relative bg-gradient-to-r from-amber-500 to-orange-600 text-white px-8 py-3 rounded-xl 
+           font-semibold shadow-md hover:shadow-lg hover:scale-105 transition-all duration-300"
+    {% if book.quantity == 0 %}disabled{% endif %}
+  >
+    <span class="relative z-10">📚 Mượn Sách Ngay</span>
+    <div class="absolute inset-0 rounded-xl opacity-0 hover:opacity-100 transition bg-gradient-to-r from-orange-400 to-yellow-500 blur-lg"></div>
+  </button>
+</div>
 
-                <div>
-                    <h2 class="text-2xl font-bold text-indigo-600 border-b pb-2 mb-4">Mô tả</h2>
-                    <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {{ book.description|default:"Sách này hiện chưa có mô tả chi tiết." }}
-                    </p>
-                </div>
-            </div>
-            
-            <div class="mt-10 pt-6 border-t border-gray-100 flex justify-end">
-                <button
-                    onclick="openBorrowModal('{{ book.book_id }}', '{{ book.title }}', '{{ book.author }}')"
-                    class="bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-8 py-3 rounded-xl hover:shadow-xl transition-all duration-300 text-lg font-bold shadow-md disabled:opacity-50"
-                    {% if book.quantity == 0 %}disabled{% endif %}
-                >
-                    Mượn Sách Ngay
-                </button>
-            </div>
         </div>
         
         {# ================================================================= #}
