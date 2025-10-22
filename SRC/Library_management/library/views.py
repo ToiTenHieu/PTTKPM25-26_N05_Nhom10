@@ -42,13 +42,23 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect("account:logout")
 
-    # Lấy danh sách sách + tính điểm trung bình
+    # Lấy kiểu sắp xếp
+    sort_type = request.GET.get("sort", "rating")
 
-    books_with_rating = Book.objects.annotate(
-        avg_rating=Avg('reviews__rating')
-    ).order_by(
-        F('avg_rating').desc(nulls_last=True)
-    )
+    if sort_type == "new":
+        # Sắp xếp theo năm xuất bản (mới nhất đến cũ nhất)
+        books_with_rating = Book.objects.annotate(
+            avg_rating=Avg('reviews__rating')
+        ).order_by(
+            F('year').desc(nulls_last=True)
+        )
+    else:
+        # Sắp xếp theo đánh giá trung bình (cao đến thấp)
+        books_with_rating = Book.objects.annotate(
+            avg_rating=Avg('reviews__rating')
+        ).order_by(
+            F('avg_rating').desc(nulls_last=True)
+        )
 
     # Phân trang
     paginator = Paginator(books_with_rating, 8)
@@ -65,7 +75,7 @@ def home(request):
     context = {
         "user_profile": user_profile,
         "max_days": getattr(user_profile, "max_days", 10),
-        "page_obj": page_obj,  # ✅ chứa cả avg_rating rồi
+        "page_obj": page_obj,
     }
     return render(request, "library/home.html", context)
 
@@ -378,10 +388,17 @@ def extend_book(request, record_id):
     max_extend = user_profile.free_extend  
     total_renewed = user_profile.total_renew_used()
 
+    # 🌍 Dịch tên gói sang tiếng Việt
+    membership_name = {
+        "basic": "Cơ bản",
+        "premium": "Nâng cao",
+        "vip": "Cao cấp"
+    }.get(user_profile.membership_level.lower(), user_profile.membership_level)
+
     if total_renewed >= max_extend:
         messages.error(
             request,
-            f"⚠️ Bạn đã đạt giới hạn {max_extend} lần gia hạn cho gói {user_profile.membership_level.upper()}."
+            f"⚠️ Bạn đã đạt giới hạn {max_extend} lần gia hạn cho gói {membership_name}.Bạn cần nâng cấp gói thành viên cao hơn"
         )
         return redirect('library:borrowed_books')
 
@@ -392,9 +409,10 @@ def extend_book(request, record_id):
             f"📘 Gia hạn thành công! Hạn mới: {record.due_date.strftime('%d/%m/%Y')}"
         )
     else:
-        messages.error(request, "⚠️ Bạn đã hết lượt gia hạn miễn phí cho gói hiện tại.")
+        messages.error(request, f"⚠️ Bạn đã hết lượt gia hạn miễn phí cho gói {membership_name} hiện tại.")
 
     return redirect('library:borrowed_books')
+
 from django.shortcuts import render
 from .models import Book
 from django.db.models import Q
@@ -441,3 +459,27 @@ def autocomplete(request):
 
     return JsonResponse({"results": suggestions})
 
+from django.http import JsonResponse
+from django.db.models import Avg, F
+from .models import Book
+
+def api_books(request):
+    sort_type = request.GET.get("sort", "rating")
+
+    if sort_type == "new":
+        books = Book.objects.annotate(avg_rating=Avg("reviews__rating")).order_by(F("year").desc(nulls_last=True))
+    else:
+        books = Book.objects.annotate(avg_rating=Avg("reviews__rating")).order_by(F("avg_rating").desc(nulls_last=True))
+
+    data = [{
+        "book_id": b.book_id,
+        "title": b.title,
+        "author": b.author,
+        "category": b.category,
+        "category_slug": b.category.lower().replace(" ", "-"),
+        "year": b.year,
+        "quantity": b.quantity,
+        "avg_rating": b.avg_rating or 0
+    } for b in books]
+
+    return JsonResponse(data, safe=False)

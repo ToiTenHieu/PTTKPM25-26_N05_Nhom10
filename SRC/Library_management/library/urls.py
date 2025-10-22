@@ -22,5 +22,5 @@ urlpatterns = [
     path('extend_book/<int:record_id>/', views.extend_book, name='extend_book'),
     path('search/', views.search, name='search'),
     path('autocomplete/', views.autocomplete, name='autocomplete'),  # 👈 Thêm dòng này
-
+    path("api/books/", views.api_books, name="api_books"),
 ]

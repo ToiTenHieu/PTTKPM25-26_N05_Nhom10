@@ -349,67 +349,71 @@
     if (defaultTab) showBorrowTab('dangMuon', defaultTab);
   });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 async function returnBook(recordId) {
-    if (!confirm(`Bạn có chắc chắn muốn xác nhận trả sách cho bản ghi ID: ${recordId}?`)) {
-        return;
+  // Hộp xác nhận
+  const result = await Swal.fire({
+    title: 'Xác nhận trả sách?',
+    text: `Bạn có chắc chắn muốn xác nhận trả sách cho người dùng ?`,
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Có, trả sách!',
+    cancelButtonText: 'Hủy'
+  });
+
+  if (!result.isConfirmed) {
+    return;
+  }
+
+  // Lấy CSRF token
+  const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
+  if (!csrfElement) {
+    Swal.fire('Lỗi!', 'Không tìm thấy CSRF token. Vui lòng kiểm tra template.', 'error');
+    return;
+  }
+  const csrfToken = csrfElement.value;
+
+  try {
+    const response = await fetch(`/librarian/api/return-book/${recordId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({ action: 'return' })
+    });
+
+    if (response.ok) {
+      await Swal.fire({
+        title: 'Thành công!',
+        text: 'Đã xác nhận trả sách thành công.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+      location.reload();
+      return;
     }
-    
-    // Đảm bảo CSRF token tồn tại trước khi dùng (Rất quan trọng)
-    const csrfElement = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (!csrfElement) {
-        alert('Lỗi: Không tìm thấy CSRF token. Vui lòng kiểm tra template.');
-        console.error('CSRF token element not found.');
-        return;
+
+    // Nếu có lỗi từ server
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const errorData = await response.json();
+      Swal.fire('Lỗi!', errorData.error || response.statusText, 'error');
+    } else {
+      let errorMessage = `Lỗi HTTP ${response.status} xảy ra.`;
+      if (response.status === 404) errorMessage = 'Không tìm thấy API.';
+      else if (response.status === 403) errorMessage = 'CSRF Token không hợp lệ.';
+      Swal.fire('Lỗi!', errorMessage, 'error');
     }
-    const csrfToken = csrfElement.value;
-    const url = `/api/return-book/${recordId}/`;
 
-    // Sử dụng khối try/catch chỉ cho mục đích DEBUG và thông báo lỗi rõ ràng hơn
-    try {
-        const response = await fetch(`/librarian/api/return-book/${recordId}/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify({ action: 'return' }) 
-        });
-
-        if (response.ok) { // Status code 200-299 (Thành công)
-            alert('Đã xác nhận trả sách thành công!');
-            location.reload(); 
-            return;
-        }
-
-        // --- XỬ LÝ LỖI SERVER (4xx hoặc 5xx) ---
-        
-        // 1. Kiểm tra header để tránh lỗi SyntaxError (khi trả về HTML thay vì JSON)
-        const contentType = response.headers.get('content-type');
-        
-        if (contentType && contentType.includes('application/json')) {
-            // Phản hồi JSON (Như mong đợi từ JsonResponse)
-            const errorData = await response.json();
-            alert(`Lỗi Server (${response.status}): ${errorData.error || response.statusText}`);
-        } else {
-            // Phản hồi HTML (Lỗi 404/500 mặc định của Django, gây ra SyntaxError)
-            
-            let errorMessage = `Lỗi HTTP ${response.status} xảy ra.`;
-            if (response.status === 404) {
-                 errorMessage = 'Lỗi 404: Không tìm thấy đường dẫn API. Vui lòng kiểm tra URLs trong Django.';
-            } else if (response.status === 403) {
-                 errorMessage = 'Lỗi 403: CSRF Token không hợp lệ. Vui lòng kiểm tra thiết lập.';
-            }
-
-            alert(errorMessage);
-            // Log lỗi HTML ra console để debug chi tiết
-            console.error(`Phản hồi lỗi ${response.status} (Không phải JSON) cho URL: ${url}`, await response.text());
-        }
-
-    } catch (error) {
-        // Khối catch này chỉ nên bắt các lỗi mạng thực sự (Failed to fetch) hoặc lỗi JS
-        console.error('Lỗi Kết Nối hoặc Code:', error);
-        alert('Lỗi kết nối đến server. (Kiểm tra server Django đang chạy?)');
-    }
+  } catch (error) {
+    console.error('Lỗi mạng hoặc JS:', error);
+    Swal.fire('Lỗi kết nối!', 'Không thể kết nối tới server Django.', 'error');
+  }
 }
 </script>
