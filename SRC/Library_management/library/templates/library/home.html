@@ -188,6 +188,7 @@ document.addEventListener("click", (e) => {
 </script>
 
 
+
     <!-- Book Catalog -->
 <section id="catalog" class="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -239,17 +240,6 @@ document.addEventListener("click", (e) => {
                 </button>
             </div>
         </div>
-<div class="flex justify-center gap-4 mb-10">
-    <button onclick="sortBooks('rating')"
-        class="sort-btn bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:scale-105 transition-all duration-300 ring-4 ring-yellow-200">
-        ⭐ Đánh Giá Cao
-    </button>
-    <button onclick="sortBooks('new')"
-        class="sort-btn bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:scale-105 transition-all duration-300">
-        🕓 Sách Mới
-    </button>
-</div>
-
         <!-- Lưới sách -->
         <div id="bookList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {% for book in page_obj %}
@@ -311,6 +301,57 @@ document.addEventListener("click", (e) => {
     </div>
 </section>
 
+<section class="max-w-7xl mx-auto py-10 px-6 space-y-16">
+
+    <!-- Sách đánh giá cao -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+            ⭐ Sách được đánh giá cao nhất
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {% for book in top_rated_books %}
+            <div class="relative bg-gradient-to-tr from-white to-gray-100 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <div class="p-5">
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">{{ book.title }}</h3>
+                    <p class="text-gray-600 text-sm mb-1">Tác giả: {{ book.author }}</p>
+                    <p class="text-gray-500 text-sm mb-2">Năm: {{ book.year }}</p>
+                    <p class="text-yellow-500 font-semibold mt-2 text-sm flex items-center gap-1">
+                        <span>⭐</span> {{ book.avg_rating|default:"0.0" }}
+                    </p>
+                </div>
+                <div class="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
+                    Hot
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Sách mới xuất bản -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+            🆕 Sách mới xuất bản
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+            {% for book in newest_books %}
+            <div class="relative bg-gradient-to-tr from-white to-blue-50 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+                <div class="p-5">
+                    <h3 class="font-bold text-lg mb-2 text-gray-800">{{ book.title }}</h3>
+                    <p class="text-gray-600 text-sm mb-1">Tác giả: {{ book.author }}</p>
+                    <p class="text-gray-500 text-sm mb-2">Năm: {{ book.year }}</p>
+                    <p class="text-yellow-500 font-semibold mt-2 text-sm flex items-center gap-1">
+                        <span>⭐</span> {{ book.avg_rating|default:"0.0" }}
+                    </p>
+                </div>
+                <div class="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
+                    New
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
 
     <!-- Services -->
 <section id="services" class="relative py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
@@ -424,7 +465,7 @@ document.addEventListener("click", (e) => {
 </div>
  <script>
         // Extended book data
-
+        let currentCategory = 'all';
 
         let currentPage = 1;
         let itemsPerPage = 12;
@@ -660,7 +701,7 @@ document.addEventListener("click", (e) => {
           });
 
           // Cập nhật số lượng
-          document.getElementById("bookCount").textContent = visibleCount;
+          //document.getElementById("bookCount").textContent = visibleCount;
         }
 
         function showBorrowTab(tabName, buttonElement) {
@@ -714,47 +755,7 @@ document.addEventListener("click", (e) => {
 
         //
     </script>
-    <script>
-async function sortBooks(sortType) {
-    // Gọi đến endpoint Django (API) lấy danh sách sách
-    const response = await fetch(`/library/api/books/?sort=${sortType}`);
-    const data = await response.json();
 
-    const bookList = document.getElementById("bookList");
-    bookList.innerHTML = "";
-
-    // Render lại danh sách sách
-    data.forEach(book => {
-        bookList.innerHTML += `
-        <div class="book-item book-card bg-white rounded-2xl shadow-lg p-6 flex flex-col border border-gray-100 transition-transform duration-300 hover:scale-[1.03] hover:shadow-2xl" data-category="${book.category_slug}">
-            <div class="flex items-start justify-between mb-4">
-                <div class="flex items-start flex-1 mr-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center mr-3">
-                        <span class="text-white text-lg">📘</span>
-                    </div>
-                    <h4 class="text-lg font-bold text-gray-900 line-clamp-2">${book.title}</h4>
-                </div>
-                <span class="text-sm font-bold bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full whitespace-nowrap">
-                    ${book.avg_rating ? `⭐ ${book.avg_rating.toFixed(1)}/5` : "Mới"}
-                </span>
-            </div>
-            <div class="text-gray-600 text-sm space-y-1 mb-4 flex-grow">
-                <p><span class="font-semibold text-gray-800">👤 Tác giả:</span> ${book.author}</p>
-                <p><span class="font-semibold text-gray-800">🏷️ Thể loại:</span> ${book.category}</p>
-                <p><span class="font-semibold text-gray-800">📅 Năm:</span> ${book.year}</p>
-            </div>
-            <div class="flex justify-between items-center border-t pt-3 mt-auto">
-                <span class="text-xs font-semibold px-3 py-1 rounded-full ${book.quantity > 5 ? 'bg-green-100 text-green-700' : book.quantity > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}">
-                    ${book.quantity > 5 ? '✅ Còn hàng' : book.quantity > 0 ? '⚠️ Sắp hết' : '❌ Hết hàng'}
-                </span>
-                <a href="/library/book/${book.book_id}/" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-lg font-bold text-sm hover:shadow-md hover:scale-105 transition-all duration-300">
-                    Chi tiết
-                </a>
-            </div>
-        </div>`;
-    });
-}
-</script>
 
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97e6d15c33c1b451',t:'MTc1Nzc1NzgzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 

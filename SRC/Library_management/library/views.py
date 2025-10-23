@@ -38,46 +38,47 @@ def catalog(request):
 
 
 def home(request):
-    # Nếu chưa đăng nhập, chuyển hướng về trang đăng nhập
     if not request.user.is_authenticated:
         return redirect("account:logout")
 
-    # Lấy kiểu sắp xếp
     sort_type = request.GET.get("sort", "rating")
 
+    # Danh sách chính (lọc theo sort)
     if sort_type == "new":
-        # Sắp xếp theo năm xuất bản (mới nhất đến cũ nhất)
         books_with_rating = Book.objects.annotate(
             avg_rating=Avg('reviews__rating')
-        ).order_by(
-            F('year').desc(nulls_last=True)
-        )
+        ).order_by(F('year').desc(nulls_last=True))
     else:
-        # Sắp xếp theo đánh giá trung bình (cao đến thấp)
         books_with_rating = Book.objects.annotate(
             avg_rating=Avg('reviews__rating')
-        ).order_by(
-            F('avg_rating').desc(nulls_last=True)
-        )
+        ).order_by(F('avg_rating').desc(nulls_last=True))
 
-    # Phân trang
     paginator = Paginator(books_with_rating, 8)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
 
-    # Lấy UserProfile
-    try:
-        user_profile = UserProfile.objects.get(user=request.user)
-    except UserProfile.DoesNotExist:
-        return redirect("login")
+    # Hai danh sách phụ
+    top_rated_books = Book.objects.annotate(
+        avg_rating=Avg("reviews__rating")
+    ).order_by(F("avg_rating").desc(nulls_last=True))[:5]
 
-    # Truyền dữ liệu ra template
+    newest_books = Book.objects.annotate(
+        avg_rating=Avg("reviews__rating")
+    ).order_by(F("year").desc(nulls_last=True))[:5]
+
+    user_profile = UserProfile.objects.get(user=request.user)
+
     context = {
         "user_profile": user_profile,
         "max_days": getattr(user_profile, "max_days", 10),
         "page_obj": page_obj,
+        "top_rated_books": top_rated_books,
+        "newest_books": newest_books,
+        "sort_type": sort_type,
     }
+
     return render(request, "library/home.html", context)
+
 
 def services(request):
     return render(request, 'library/services.html')
@@ -463,23 +464,4 @@ from django.http import JsonResponse
 from django.db.models import Avg, F
 from .models import Book
 
-def api_books(request):
-    sort_type = request.GET.get("sort", "rating")
 
-    if sort_type == "new":
-        books = Book.objects.annotate(avg_rating=Avg("reviews__rating")).order_by(F("year").desc(nulls_last=True))
-    else:
-        books = Book.objects.annotate(avg_rating=Avg("reviews__rating")).order_by(F("avg_rating").desc(nulls_last=True))
-
-    data = [{
-        "book_id": b.book_id,
-        "title": b.title,
-        "author": b.author,
-        "category": b.category,
-        "category_slug": b.category.lower().replace(" ", "-"),
-        "year": b.year,
-        "quantity": b.quantity,
-        "avg_rating": b.avg_rating or 0
-    } for b in books]
-
-    return JsonResponse(data, safe=False)
