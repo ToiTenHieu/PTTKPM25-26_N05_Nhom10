@@ -10,7 +10,7 @@ class MembershipContext:
         elif level == "premium":
             self.state = PremiumState()
         else:
-            self.state = BasicState()  # mặc định
+            self.state = BasicState() 
 
     def get_info(self):
         return {

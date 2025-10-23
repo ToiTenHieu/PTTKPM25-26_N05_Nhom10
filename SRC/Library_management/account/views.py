@@ -1,13 +1,17 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash, authenticate
-from django.contrib.auth import login as auth_login, logout as auth_logout  # alias
+from django.contrib.auth import (
+    authenticate, login as auth_login, logout as auth_logout,
+    update_session_auth_hash
+)
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
-from django.db import transaction
 from django.contrib.auth.models import User
+from django.db import transaction
+
 from .forms import UserRegisterForm, UserForm, ChangeUserProfileForm
 from .models import UserProfile
+from library.models import BorrowRecord
 
 
 def register(request):
@@ -48,22 +52,17 @@ def register(request):
     else:
         return render(request, "account/register.html")
 
-
 def login_view(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
             auth_login(request, user)
-
-            # 🔑 Lấy role từ UserProfile
             try:
                 profile = UserProfile.objects.get(user=user)
             except UserProfile.DoesNotExist:
                 messages.error(request, "Không tìm thấy thông tin người dùng.")
                 return redirect('account:login')
-
-            # 🔁 Chuyển hướng theo vai trò
             if user.is_superuser:
                 return redirect('/admin/')
             elif profile.role == 'librarian':
@@ -84,26 +83,16 @@ def logout_view(request):
     return redirect("account:login")
 
 
-from django.contrib import messages
-from django.shortcuts import render, redirect
-from .models import UserProfile
-from library.models import BorrowRecord  # import model BorrowRecord nếu ở app khác
-from .forms import UserForm, ChangeUserProfileForm
 @login_required
 @transaction.atomic
-
 def profile(request):
     user = request.user
     profile, created = UserProfile.objects.get_or_create(user=user)
-
-    # 🟢 Lấy thống kê mượn sách của user
     total_borrowed = BorrowRecord.objects.filter(user=profile).count()
     currently_borrowed = BorrowRecord.objects.filter(user=profile, status='borrowed').count()
-
     if request.method == "POST":
         user_form = UserForm(request.POST, instance=user)
         profile_form = ChangeUserProfileForm(request.POST, request.FILES, instance=profile)
-
         if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -119,12 +108,10 @@ def profile(request):
         "user_form": user_form,
         "profile_form": profile_form,
         "user": user,
-        "total_borrowed": total_borrowed,        # 🟢 thêm vào context
-        "currently_borrowed": currently_borrowed # 🟢 thêm vào context
+        "total_borrowed": total_borrowed,        
+        "currently_borrowed": currently_borrowed 
     }
     return render(request, "account/profile.html", context)
-
-
 
 @login_required
 def change_password(request):

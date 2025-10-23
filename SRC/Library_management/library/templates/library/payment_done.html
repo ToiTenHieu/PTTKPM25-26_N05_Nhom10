@@ -173,9 +173,11 @@
                 </p>
                 
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button onclick="startTour()" class="bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+                    <a href="{% url 'library:home' %}">
+                    <button  class="bg-white text-indigo-600 px-8 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
                         🚀 Bắt đầu khám phá
                     </button>
+                    </a>
                     <button onclick="scrollToFeatures()" class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white hover:text-indigo-600 transition-colors">
                         📋 Xem đặc quyền
                     </button>
@@ -211,10 +213,7 @@
                                 <span class="text-gray-700">Hết hạn: <strong style="color: red;">{{ profile_form.instance.membership_expiry_date|date:"d/m/Y" }}</strong></span>
                             </div>
                             <div class="flex items-center">
-                                <span class="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                                    <span class="text-white text-xs">🎁</span>
-                                </span>
-                                <span class="text-gray-700">Tặng kèm: <strong>7 ngày miễn phí</strong></span>
+
                             </div>
                         </div>
                     </div>

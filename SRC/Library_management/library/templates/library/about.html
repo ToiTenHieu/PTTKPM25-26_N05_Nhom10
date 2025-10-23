@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Số - Hệ Thống Mượn Sách Truyền Thống</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+{% extends "base.html" %}
+
+{% block title %}Thư viện{% endblock %}
+
+{% block extra_css%}
         body {
             box-sizing: border-box;
         }
@@ -109,7 +106,7 @@
             top: 0;
             bottom: -30px;
             width: 2px;
-            background: linear-gradient(180deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(180deg, #f2f3f5ff, #1d4ed8);
         }
         
         .timeline-item:last-child::before {
@@ -131,7 +128,7 @@
         .stats-counter {
             font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            background: linear-gradient(135deg, #f3f4f6ff, #1d4ed8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -169,39 +166,10 @@
         .notification.show {
             transform: translateX(0);
         }
-    </style>
-</head>
+{% endblock %}
+{% block content %}
 <body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white shadow-lg sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                        <span class="text-white font-bold text-lg">📚</span>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-900">Thư Viện Số</h1>
-                        <p class="text-xs text-gray-500">Hệ thống mượn sách hiện đại</p>
-                    </div>
-                </div>
-                
-                <nav class="hidden md:flex space-x-8">
-                    <a href="#features" class="text-blue-600 font-medium">Tính năng</a>
-                    <a href="#process" class="text-gray-700 hover:text-blue-600 font-medium">Quy trình</a>
-                    <a href="#benefits" class="text-gray-700 hover:text-blue-600 font-medium">Lợi ích</a>
-                    <a href="#demo" class="text-gray-700 hover:text-blue-600 font-medium">Trải nghiệm</a>
-                </nav>
-                
-                <div class="flex items-center space-x-4">
-                    <button onclick="showDemo()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                        🚀 Dùng thử ngay
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
+    
     <!-- Hero Section -->
     <section class="hero-bg text-white py-20 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -245,7 +213,7 @@
                         <button onclick="scrollToFeatures()" class="bg-white text-blue-600 px-8 py-4 rounded-lg hover:bg-gray-100 transition-colors font-semibold text-lg">
                             📋 Tìm hiểu chi tiết
                         </button>
-                        <button onclick="showDemo()" class="bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg hover:bg-yellow-400 transition-colors font-semibold text-lg">
+                        <button  class="bg-yellow-500 text-gray-900 px-8 py-4 rounded-lg hover:bg-yellow-400 transition-colors font-semibold text-lg">
                             🎯 Trải nghiệm ngay
                         </button>
                     </div>
@@ -1235,3 +1203,4 @@
     </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ff2a7a46503d96',t:'MTc2MDY5NzUwMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+{%endblock%}

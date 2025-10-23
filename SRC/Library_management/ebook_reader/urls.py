@@ -6,4 +6,5 @@ app_name = 'ebook_reader'
 
 urlpatterns = [
     path('read/<int:ebook_id>/', views.read_ebook_view, name='read_ebook'),
+    path('digital/',views.digital,name='digital'),
 ]
