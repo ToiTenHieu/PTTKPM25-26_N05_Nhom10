@@ -305,51 +305,75 @@ document.addEventListener("click", (e) => {
 
     <!-- Sách đánh giá cao -->
     <div>
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
-            ⭐ Sách được đánh giá cao nhất
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {% for book in top_rated_books %}
-            <div class="relative bg-gradient-to-tr from-white to-gray-100 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                <div class="p-5">
-                    <h3 class="font-bold text-lg mb-2 text-gray-800">{{ book.title }}</h3>
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+        ⭐ Sách được đánh giá cao nhất
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        {% for book in top_rated_books %}
+        <div class="relative bg-gradient-to-tr from-white to-gray-100 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+            <div class="p-5 flex flex-col justify-between h-full">
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-gray-800 line-clamp-2">{{ book.title }}</h3>
                     <p class="text-gray-600 text-sm mb-1">Tác giả: {{ book.author }}</p>
                     <p class="text-gray-500 text-sm mb-2">Năm: {{ book.year }}</p>
                     <p class="text-yellow-500 font-semibold mt-2 text-sm flex items-center gap-1">
                         <span>⭐</span> {{ book.avg_rating|default:"0.0" }}
                     </p>
                 </div>
-                <div class="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
-                    Hot
+
+                <div class="mt-4 flex justify-center">
+                    <a href="{% url 'library:book_detail_view' book.book_id %}"
+                        class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-md hover:shadow-xl hover:scale-105 hover:from-orange-500 hover:to-yellow-500 transition-all duration-300 ease-in-out">
+                        📘 Chi tiết
+                    </a>
                 </div>
             </div>
-            {% endfor %}
+
+            <div class="absolute top-0 right-0 bg-yellow-400 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
+                Hot
+            </div>
         </div>
+        {% endfor %}
     </div>
+</div>
+
 
     <!-- Sách mới xuất bản -->
     <div>
-        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
-            🆕 Sách mới xuất bản
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            {% for book in newest_books %}
-            <div class="relative bg-gradient-to-tr from-white to-blue-50 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
-                <div class="p-5">
-                    <h3 class="font-bold text-lg mb-2 text-gray-800">{{ book.title }}</h3>
+    <h2 class="text-3xl font-extrabold text-gray-900 mb-6 flex items-center gap-2">
+        🆕 Sách mới xuất bản
+    </h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        {% for book in newest_books %}
+        <div class="relative bg-gradient-to-tr from-white to-blue-50 shadow-lg rounded-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300">
+            <div class="p-5 flex flex-col justify-between h-full">
+                <div>
+                    <h3 class="font-bold text-lg mb-2 text-gray-800 line-clamp-2">{{ book.title }}</h3>
                     <p class="text-gray-600 text-sm mb-1">Tác giả: {{ book.author }}</p>
                     <p class="text-gray-500 text-sm mb-2">Năm: {{ book.year }}</p>
                     <p class="text-yellow-500 font-semibold mt-2 text-sm flex items-center gap-1">
                         <span>⭐</span> {{ book.avg_rating|default:"0.0" }}
                     </p>
                 </div>
-                <div class="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
-                    New
+
+                <div class="mt-4 flex justify-center">
+                    <a href="{% url 'library:book_detail_view' book.book_id %}"
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl font-semibold text-sm shadow-md hover:shadow-xl hover:scale-105 hover:from-indigo-500 hover:to-blue-600 transition-all duration-300 ease-in-out">
+                        📘 Chi tiết
+                    </a>
                 </div>
             </div>
-            {% endfor %}
+
+            <div class="absolute top-0 right-0 bg-blue-500 text-white px-3 py-1 text-xs font-semibold rounded-bl-xl">
+                New
+            </div>
         </div>
+        {% endfor %}
     </div>
+</div>
+
 
 </section>
 
